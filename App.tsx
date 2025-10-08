@@ -12,7 +12,8 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { createTables, getDBConnection } from './src/habit/infrastructure/HabitDatabase';
+import { createTables, getDBConnection } from './src/habit/infrastructure/datasources/HabitDatabase';
+import HabitListScreen from './src/habit/presentation/screens/HabitListScreen';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -29,12 +30,16 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      {/* <AppContent /> */}
+      <HabitListScreen />
     </SafeAreaProvider>
   );
 }
 
+// import { habitStore } from './src/habit/presentation/stores/HabitStore';
+
 function AppContent() {
+    // const { habits, loadHabits } = habitStore;                                                 
   const safeAreaInsets = useSafeAreaInsets();
 
   return (
