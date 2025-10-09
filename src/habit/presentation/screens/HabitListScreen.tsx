@@ -13,7 +13,7 @@ const HabitListScreen = observer(() => {
     const today = new Date();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const navigation = useNavigation();
-    const [viewOption, setViewOption] = useState<boolean>(false);
+    const [viewOption, setViewOption] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchHabits = async () => {
