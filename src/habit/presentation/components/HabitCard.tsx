@@ -6,15 +6,15 @@ import { habitStore } from "../stores/HabitStore";
 interface HabitCardProps {
     habit: Habit,
     editable: boolean
-    habitStore:()=>void;
+    // habitStore:()=>void;
 }
 
-export function HabitCard({ habit, editable }: HabitCardProps) {
+export function HabitCard({ habit, editable}: HabitCardProps) {
     const [completed, setCompleted] = useState<boolean>(habit.completed);
     const [expanded, setExpanded] = useState<boolean>(false);
 
     const handleMarkHabit=()=>{
-        habitStore.loadHabits();
+        // habitStore.loadHabits();
     }
 
     return (

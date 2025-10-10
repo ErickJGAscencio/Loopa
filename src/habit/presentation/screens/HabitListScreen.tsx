@@ -121,7 +121,7 @@ const HabitListScreen = observer(() => {
 
                     <ScrollView style={{ width: '100%' }}>
                         {habitStore.habits.map(habit => (
-                            <HabitCard key={habit.id} habit={habit} editable={true} habitStore={habitStore}/>
+                            <HabitCard key={habit.id} habit={habit} editable={true} />
                         ))}
                     </ScrollView>
                 </>

@@ -2,7 +2,7 @@
 // Aquí se traducen entre entidasdes y datos crudos.
 
 import { Habit } from '../../domain/entities/Habit';
-import { IHabitRepository } from '../../domain/repositories/IHabitRepository';
+import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
 import { getDBConnection, getHabits, insertHabit } from '../datasources/HabitDatabase';
 
 export class HabitRepositoryImpl implements IHabitRepository {
