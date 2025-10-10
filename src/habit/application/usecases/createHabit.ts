@@ -6,7 +6,7 @@ export class CreateHabit {
 
     async execute(habit: Habit): Promise<void> {
         // Validación Básica
-        if (!habit.name || habit.reminderTimes.length == 0) {
+        if (!habit.name) {
             throw new Error('Nombre y horarios son requeridos');
         }
 

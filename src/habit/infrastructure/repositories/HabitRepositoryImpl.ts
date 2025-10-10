@@ -17,4 +17,8 @@ export class HabitRepositoryImpl implements IHabitRepository {
         console.log("HÁBITOS DESDE REPO:", habits);
         return habits;
     }
+
+    async markDone(id: number, status: boolean){
+
+    }
 }

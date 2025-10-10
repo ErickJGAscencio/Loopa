@@ -45,7 +45,7 @@ const HabitListScreen = observer(() => {
     }, [navigation]);
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', padding: 20, backgroundColor: '#ededed', gap: 20 }}>
+        <View style={{ flex: 1, alignItems: 'center', padding: 20, backgroundColor: '#ededed', gap: 10 }}>
             <LinearGradient
                 colors={['#1e1e1e', '#D0D0D0']}
                 start={{ x: 0, y: 0 }}
@@ -121,7 +121,7 @@ const HabitListScreen = observer(() => {
 
                     <ScrollView style={{ width: '100%' }}>
                         {habitStore.habits.map(habit => (
-                            <HabitCard key={habit.id} habit={habit} editable={true}/>
+                            <HabitCard key={habit.id} habit={habit} editable={true} habitStore={habitStore}/>
                         ))}
                     </ScrollView>
                 </>

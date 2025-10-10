@@ -5,5 +5,5 @@ import {Habit} from '../entities/Habit';
 export interface IHabitRepository {
   create(habit: Habit): Promise<void>;
   getAll(): Promise<Habit[]>;
-  markDone(id: number, date: string): Promise<void>;
+  markDone(id: number, status: boolean): Promise<void>;
 }

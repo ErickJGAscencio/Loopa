@@ -5,6 +5,7 @@ import { HabitRepositoryImpl } from '../../infrastructure/repositories/HabitRepo
 import { CreateHabit } from "../../application/usecases/createHabit";
 import { GetHabits } from '../../application/usecases/getHabits';
 import { makeAutoObservable } from "mobx";
+import { MarkHabitDone } from "habit/application/usecases/markHabitDone";
 
 const habitRepositoryImpl = new HabitRepositoryImpl();
 
@@ -43,10 +44,14 @@ class HabitStore {
 
     async createHabit(habit: Habit) {
         const usecase = new CreateHabit(habitRepositoryImpl);
+        // console.log(habit);
         await usecase.execute(habit);
         await this.loadHabits();
     }
 
+    async markHabitDone(id: number, status: boolean){
+        const usecase = new MarkHabitDone(habitRepositoryImpl);
+    }
 }
 
 export const habitStore = new HabitStore();

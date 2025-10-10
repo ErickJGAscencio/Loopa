@@ -2,6 +2,7 @@
 
 import { Habit } from 'habit/domain/entities/Habit';
 import SQLite from 'react-native-sqlite-storage';
+
 SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 
@@ -28,7 +29,6 @@ export const createTables = async (db: any) => {
       paused INTEGER NOT NULL
     );
   `;
-
   await db.executeSql(query);
 };
 
@@ -58,7 +58,6 @@ export async function getHabits(db:any): Promise<Habit[]> {
   console.log("RAW DB RESULTS:", results);
   return results[0].rows.raw().map(row => ({
     ...row,
-    reminderTimes: JSON.parse(row.reminder_times),
     days: JSON.parse(row.days),
     paused: !!row.paused
   }));

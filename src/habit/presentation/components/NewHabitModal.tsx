@@ -15,7 +15,6 @@ interface HabitForm {
 }
 
 export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalProps) {
-    const [showPicker, setShowPicker] = useState<boolean>(false);
     const [form, setForm] = useState<HabitForm>({
         name: "",
         description: "",

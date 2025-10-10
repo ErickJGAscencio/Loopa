@@ -1,15 +1,22 @@
 import { Habit } from "habit/domain/entities/Habit";
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { habitStore } from "../stores/HabitStore";
 
 interface HabitCardProps {
     habit: Habit,
     editable: boolean
+    habitStore:()=>void;
 }
 
 export function HabitCard({ habit, editable }: HabitCardProps) {
     const [completed, setCompleted] = useState<boolean>(habit.completed);
     const [expanded, setExpanded] = useState<boolean>(false);
+
+    const handleMarkHabit=()=>{
+        habitStore.loadHabits();
+    }
+
     return (
         <View style={[styles.container]}>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -53,7 +60,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
             </View>
             {expanded &&
                 <View style={{ display: 'flex', gap: 10 }}>
-                    <View style={{ height: 1, backgroundColor: '#1e1e1e', width: '100%', marginVertical: 10 }} />
+                    <View style={{ height: 1, backgroundColor: '#9f9f9fff', width: '100%', marginVertical: 10 }} />
 
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ width: '48%', backgroundColor: '#e6e6e6ff', borderRadius: 10, paddingBlock: 5, paddingInline: 15, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
