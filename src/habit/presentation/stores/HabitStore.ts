@@ -5,7 +5,7 @@ import { HabitRepositoryImpl } from '../../infrastructure/repositories/HabitRepo
 import { CreateHabit } from "../../application/usecases/createHabit";
 import { GetHabits } from '../../application/usecases/getHabits';
 import { makeAutoObservable } from "mobx";
-import { MarkHabitDone } from "habit/application/usecases/markHabitDone";
+import { MarkHabitDone } from "../../application/usecases/markHabitDone";
 
 const habitRepositoryImpl = new HabitRepositoryImpl();
 

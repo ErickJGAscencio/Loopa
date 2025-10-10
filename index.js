@@ -2,8 +2,10 @@
  * @format
  */
 
+import Toast from 'react-native-toast-message';
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
 
 AppRegistry.registerComponent(appName, () => App);
+Toast.setRef(ref => Toast.setRef(ref));

@@ -1,4 +1,3 @@
-import { Habit } from '../../domain/entities/Habit';
 import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
 
 export class MarkHabitDone {

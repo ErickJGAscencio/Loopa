@@ -7,13 +7,17 @@ SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 
 export const getDBConnection = async () => {
-  return SQLite.openDatabase(
-    {
-      name: 'loopa.db',
-      location: 'default'
-
-    });
+  try {
+    const db = await SQLite.openDatabase({ name: 'loopa.db', location: 'default' });
+    // console.log('✅ Base de datos abierta correctamente');
+    
+    return db;
+  } catch (error) {
+    console.error('Error al abrir la base de datos:', error);
+    throw error;
+  }
 };
+
 
 export const createTables = async (db: any) => {
   // await db.executeSql(`DROP TABLE IF EXISTS habits`);
