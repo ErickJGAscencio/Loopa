@@ -25,6 +25,10 @@ class HabitStore {
         return this.habits.filter(habit => habit.completed).length;
     }
 
+    get habitsCompleted(): Habit[] {
+        // console.log("Total Habitos: ", this.habits.length);
+        return this.habits.filter(habit => habit.completed);
+    }
     get completedPorcent(): number {
         // console.log("Total Habitos: ", this.habits.length);
         const total = this.habits.length;

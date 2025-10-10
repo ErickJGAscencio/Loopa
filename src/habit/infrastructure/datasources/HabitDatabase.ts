@@ -21,7 +21,6 @@ export const createTables = async (db: any) => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT ,
-      reminder_times TEXT,
       days TEXT NOT NULL,
       created_at TEXT,
       updated_at TEXT,
@@ -35,13 +34,12 @@ export const createTables = async (db: any) => {
 
 export const insertHabit = async (db: any, habit: any) => {
   const query = `
-    INSERT INTO habits (name, description, reminder_times, days, created_at, updated_at, completed, paused)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO habits (name, description, days, created_at, updated_at, completed, paused)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
   `;
   const params = [
     habit.name,
     habit.description,
-    JSON.stringify(habit.reminderTimes),
     JSON.stringify(habit.days),
     new Date().toISOString(),
     new Date().toISOString(),

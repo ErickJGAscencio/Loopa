@@ -1,6 +1,6 @@
 import { habitStore } from '../../presentation/stores/HabitStore';
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, Button, TextInput, StyleSheet } from 'react-native';
 import { HabitCard } from "../components/HabitCard";
 import { observer } from "mobx-react-lite";
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
@@ -13,7 +13,7 @@ const HabitListScreen = observer(() => {
     const today = new Date();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const navigation = useNavigation();
-    const [viewOption, setViewOption] = useState<boolean>(true);
+    const [sectionActive, setSectionActive] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchHabits = async () => {
@@ -53,9 +53,9 @@ const HabitListScreen = observer(() => {
                 style={{ width: '100%', backgroundColor: '#1e1e1e', padding: 15, borderRadius: 15 }}
             >
                 <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignContent: 'center' }}>
+                    <View style={{ display: 'flex', flexDirection: 'row'}}>
                         <Text style={{ color: '#EFEFEF', fontSize: 35, fontWeight: 600 }}>{habitStore.completedPorcent}%</Text>
-                        <Text style={{ color: '#EFEFEF', fontSize: 10, textAlign: 'right' }}>COMPLETADO</Text>
+                        <Text style={{ color: '#EFEFEF', fontSize: 10}}>COMPLETADO</Text>
                     </View>
 
                     <View style={{ display: 'flex', flexDirection: 'column' }}>
@@ -69,16 +69,36 @@ const HabitListScreen = observer(() => {
                 </View>
             </LinearGradient>
 
-            <View style={{ backgroundColor: '#cdcdcded', width: '100%', borderRadius: 10, display: 'flex', flexDirection: 'row', gap: 10, padding: 10, justifyContent: 'space-between' }}>
-                <TouchableOpacity style={{ width: '48%', backgroundColor: '#cdcdcded', padding: 10, borderRadius: 10, alignContent: 'center', justifyContent: 'center' }} onPress={() => setViewOption(true)}>
-                    <Text style={{ color: 'rgba(150, 150, 150, 1)ed', fontSize: 16, textAlign: 'center' }}>Lista</Text>
+            <View style={{
+                backgroundColor: '#e4e4e4ff',
+                width: '100%',
+                borderRadius: 10,
+                flexDirection: 'row',
+                gap: 10,
+                padding: 10,
+                justifyContent: 'space-between'
+            }}>
+                <TouchableOpacity
+                    style={[styles.button, sectionActive ? styles.sectionActive : styles.sectionDesactive]}
+                    onPress={() => setSectionActive(true)}
+                >
+                    <Text style={[styles.sectionText, sectionActive ? styles.activeText : styles.inactiveText]}>
+                        Hábitos
+                    </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ width: '48%', backgroundColor: '#efefef', padding: 10, borderRadius: 10, alignContent: 'center', justifyContent: 'center' }} onPress={() => setViewOption(false)}>
-                    <Text style={{ color: '#1e1e1e', fontSize: 16, textAlign: 'center' }}>Calendario</Text>
+
+                <TouchableOpacity
+                    style={[styles.button, sectionActive ? styles.sectionDesactive : styles.sectionActive]}
+                    onPress={() => setSectionActive(false)}
+                >
+                    <Text style={[styles.sectionText, sectionActive ? styles.inactiveText : styles.activeText]}>
+                        Calendario
+                    </Text>
                 </TouchableOpacity>
             </View>
 
-            {viewOption ? (
+
+            {sectionActive ? (
                 <>
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                         <Text style={{ color: '#1e1e1e', fontSize: 20, fontWeight: 400 }}>
@@ -86,7 +106,7 @@ const HabitListScreen = observer(() => {
                         </Text>
                         <TouchableOpacity
                             style={{
-                                width: 50,
+                                width: 35,
                                 height: 35,
                                 justifyContent: 'center',
                                 backgroundColor: '#1e1e1e',
@@ -101,7 +121,7 @@ const HabitListScreen = observer(() => {
 
                     <ScrollView style={{ width: '100%' }}>
                         {habitStore.habits.map(habit => (
-                            <HabitCard key={habit.id} habit={habit} />
+                            <HabitCard key={habit.id} habit={habit} editable={true}/>
                         ))}
                     </ScrollView>
                 </>
@@ -119,3 +139,34 @@ const HabitListScreen = observer(() => {
 });
 
 export default HabitListScreen;
+
+const styles = StyleSheet.create({
+    button:{
+        width:'45%',
+        borderRadius: 8,
+    },
+    sectionActive: {
+        backgroundColor: '#EFEFEF',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+    },
+    sectionDesactive: {
+        backgroundColor: '#e4e4e4ff',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+    },
+    sectionText: {
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    activeText: {
+        color: '#1e1e1e',
+        fontSize:15,
+        fontWeight:500
+    },
+    inactiveText: {
+        color: '#727272ff',
+        fontSize:15,
+        fontWeight:500
+    },
+});
