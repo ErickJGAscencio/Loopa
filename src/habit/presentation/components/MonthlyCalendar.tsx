@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { habitStore } from "../stores/HabitStore";
 import { HabitCard } from "./HabitCard";
+import { habitLogStore } from "../stores/HabitLogStore";
 
 export function MonthlyCalendar() {
   const today = new Date();
@@ -13,7 +14,11 @@ export function MonthlyCalendar() {
   const startWeekday = firstDay.getDay(); // 0 = Sunday
   const [daySelected, setDaySelected] = useState<number | null>(today.getDate());
 
-  console.log(daySelected);
+  const selectedDate = daySelected
+    ? new Date(year, month, daySelected)
+    : today;
+
+  const isoDate = selectedDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
   // Generar array de días con padding inicial
   const daysArray = [];
   for (let i = 0; i < startWeekday; i++) {
@@ -24,11 +29,11 @@ export function MonthlyCalendar() {
   }
 
   useEffect(() => {
-    const fetchHabits = async () => {
-      await habitStore.loadHabits();
-      console.log("HÁBITOS EN UI:", habitStore.habits);
+    const fetchHabitsLogs = async () => {
+      await habitLogStore.loadLogs();
+      // console.log("HÁBITOS EN UI:", habitStore.habits);
     };
-    fetchHabits();
+    fetchHabitsLogs();
   }, []);
 
   return (
@@ -57,45 +62,48 @@ export function MonthlyCalendar() {
             </Text>
           ))}
           {daysArray.map((day, index) => {
-  const isToday = day === today.getDate();
-  const isSelected = day === daySelected;
-
-  return (
-    <View key={index} style={styles.dayBox}>
-      <TouchableOpacity
-        activeOpacity={0.4}
-        onPress={() => setDaySelected(day)}
-        style={[
-          styles.dayContainer,
-          isSelected && styles.daySelected,
-          isToday && styles.todayContainer,
-        ]}
-      >
-        <Text
-          style={[
-            styles.dayText,
-            isToday && styles.todayText,
-            isSelected && styles.selectedText,
-          ]}
-        >
-          {day ?? ""}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-})}
+            const isToday = day === today.getDate();
+            const isSelected = day === daySelected;
+            return (
+              <View key={index} style={styles.dayBox}>
+                <TouchableOpacity
+                  activeOpacity={0.4}
+                  onPress={() => setDaySelected(day)}
+                  style={[
+                    styles.dayContainer,
+                    isSelected && styles.daySelected,
+                    isToday && styles.todayContainer,
+                    day != null && day < today.getDate() && styles.pastDayContainer
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.dayText,
+                      isToday && styles.todayText,
+                      isSelected && styles.selectedText,
+                    ]}
+                  >
+                    {day ?? ""}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
 
         </View>
       </View>
 
       <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>
-        <Text style={{ fontWeight: 600, fontSize: 15 }}>Hábitos completados - {today.toLocaleString("es-MX", { day: "numeric", month: '2-digit', year: 'numeric' })}</Text>
+        <Text style={{ fontWeight: 600, fontSize: 15 }}>
+          Hábitos completados - {selectedDate.toLocaleString("es-MX", { day: "numeric", month: '2-digit', year: 'numeric' })}
+        </Text>
 
         <View>
-          {habitStore.habitsCompleted.map(habit => (
+          {habitStore.habitsByDay(isoDate).map(habit => (
             <HabitCard key={habit.id} habit={habit} editable={false} />
           ))}
         </View>
+
       </View>
     </ScrollView>
   );
@@ -134,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 4,
-  },  
+  },
   dayContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -161,5 +169,8 @@ const styles = StyleSheet.create({
   selectedText: {
     fontWeight: 'bold',
   },
+  pastDayContainer: {
+    backgroundColor: "#e4e4e4ff",
+  }
 });
 

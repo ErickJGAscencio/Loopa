@@ -9,4 +9,6 @@ export interface Habit {
     updatedAt: string;
     completed: boolean;
     paused: boolean;
+    currentStreak: number;
+    totalCompleted: number;
 }

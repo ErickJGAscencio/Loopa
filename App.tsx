@@ -29,6 +29,7 @@ function App() {
       const db = await getDBConnection();
       try {
         await createTables(db);
+
         Toast.show({
           type: 'success',
           text1: 'Base de datos creada',

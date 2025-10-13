@@ -1,20 +1,28 @@
 import { Habit } from "habit/domain/entities/Habit";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { habitStore } from "../stores/HabitStore";
+import { habitLogStore } from "../stores/HabitLogStore";
 
 interface HabitCardProps {
     habit: Habit,
     editable: boolean
-    // habitStore:()=>void;
 }
 
-export function HabitCard({ habit, editable}: HabitCardProps) {
+export function HabitCard({ habit, editable }: HabitCardProps) {
     const [completed, setCompleted] = useState<boolean>(habit.completed);
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    const handleMarkHabit=()=>{
-        // habitStore.loadHabits();
+    const handleMarkHabit = () => {
+        if(habit!=null){
+            habitStore.markHabitDone(habit.id || 0, !completed);
+            const habitLog = {
+                habit_id: habit.id!,
+                date: new Date().toISOString(),
+                completed: !completed,
+            }
+            habitLogStore.createHabitLog(habitLog);
+        }
     }
 
     return (
@@ -33,14 +41,17 @@ export function HabitCard({ habit, editable}: HabitCardProps) {
                                 borderWidth: 1,
                                 borderColor: '#bdbdbdff',
                             }}
-                            onPress={() => setCompleted(!completed)}
+                            onPress={() => {
+                                handleMarkHabit();
+                                setCompleted(!completed);
+                            }}
+
                         >
                         </TouchableOpacity>
                     }
                     <Text style={{
                         color: '#666666ff',
                         fontSize: 18,
-                        textDecorationLine: completed ? 'line-through' : 'none',
                     }}>
                         {habit.name}
                     </Text>

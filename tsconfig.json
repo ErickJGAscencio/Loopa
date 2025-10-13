@@ -4,7 +4,7 @@
     "baseUrl": "./src",
     "paths": {
       "*": ["*"],
-      "@habit/*": ["habit/*"]
+      // "@habit/*": ["habit/*"]
     },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

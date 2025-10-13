@@ -29,7 +29,9 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             completed: false,
-            paused: false
+            paused: false,
+            currentStreak:1,
+            totalCompleted:1,
         };
 
         habitStore.createHabit(habit);

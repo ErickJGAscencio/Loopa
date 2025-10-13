@@ -6,7 +6,7 @@ export class GetHabits {
 
   async execute(): Promise<Habit[]> {
     const habits = await this.habitRepo.getAll();
-    console.log("HÁBITOS DESDE USECASE:", habits);
+    // console.log("HÁBITOS DESDE USECASE:", habits);
     return habits;
   }
 }
