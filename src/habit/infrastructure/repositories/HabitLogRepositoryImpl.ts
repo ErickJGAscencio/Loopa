@@ -10,10 +10,12 @@ export class HabitLogRepositoryImpl implements IHabitLogRepository {
     }
 
     async getAll(): Promise<HabitLog[]> {
-        console.log("getAll HabitLogRepositoryImpl");
-
-        const db = getDBConnection();
+        // console.log("Entre a getAll en Impl");
+        const db = await getDBConnection();
+        // console.log("Se conectó a la db desde Impl");
+        
         const habitsLogs = await getHabitsLogs(db);
+        // console.log("--------------------LOGS DESDE REPO:", habitsLogs);
         return habitsLogs;
     }
 }

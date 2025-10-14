@@ -28,13 +28,13 @@ export function MonthlyCalendar() {
     daysArray.push(i);
   }
 
-  useEffect(() => {
-    const fetchHabitsLogs = async () => {
-      await habitLogStore.loadLogs();
-      // console.log("HÁBITOS EN UI:", habitStore.habits);
-    };
-    fetchHabitsLogs();
-  }, []);
+  // useEffect(() => {
+  //   const fetchHabitsLogs = async () => {
+  //     await habitLogStore.loadLogs();
+  //     console.log("HÁBITOS-LOGS EN UI:", habitStore.habits);
+  //   };
+  //   fetchHabitsLogs();
+  // }, []);
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -99,11 +99,14 @@ export function MonthlyCalendar() {
         </Text>
 
         <View>
-          {habitStore.habitsByDay(isoDate).map(habit => (
-            <HabitCard key={habit.id} habit={habit} editable={false} />
-          ))}
+          {habitStore.habitsByDay(isoDate).length > 0 ?
+            habitStore.habitsByDay(isoDate).map(habit => (
+              <HabitCard key={habit.id} habit={habit} editable={false} />
+            ))
+            :
+            <Text style={{marginTop:10}}>No hay registros para este día.</Text>
+          }
         </View>
-
       </View>
     </ScrollView>
   );

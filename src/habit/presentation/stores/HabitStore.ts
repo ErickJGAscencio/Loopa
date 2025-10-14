@@ -50,24 +50,24 @@ class HabitStore {
     get habitsByDay(): (date: string) => Habit[] {
 
         return (date: string) => {
-            // console.log("📅 Fecha solicitada:", date);
+            // console.log(habitLogStore.logs);
 
-            // console.log("📋 Logs en DB:", habitLogStore.logs);
+            const logs = habitLogStore.logs.filter(log => {
+                const logDate = log.date.split('T')[0]; //log.date.split('T')[0] Separamos la fecha 00/00/00 [T]00:00:00 y guardamos solo lo que hay en indice 0 (fecha)
+                // console.log("Comparamos: ", logDate, " === ", date);
+                return logDate === date && log.completed;
+            });
 
-            const logs = habitLogStore.logs.filter(log => {log.date === date && log.completed, console.log("Log Date: ",log.date)});
-            // console.log("📋 Logs completados ese día:", logs);
-
-            const completedIds = logs.map(log => log.habit_id);
-            // console.log("✅ IDs de hábitos completados:", completedIds);
+            // console.log(logs);
+            const completedIds = logs.map(log => log.habit_id); //Obtenemos los ids de los habitos completados
+            // console.log(completedIds);
 
             const filteredHabits = this.habits.filter(habit =>
                 habit.id != null &&
-                completedIds.includes(habit.id) &&
-                new Date(habit.createdAt) <= new Date(date)
+                completedIds.includes(habit.id) //Obtenemos el objeto del habito que se haye en la lista y corresponda a un id dentro del log
             );
-            // console.log("📦 Hábitos completados ese día:", filteredHabits);
+            // console.log(filteredHabits);
             return filteredHabits;
-
         };
     }
 

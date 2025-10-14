@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput,  TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { BaseModal } from "./BaseModal";
 import { habitStore } from "../stores/HabitStore";
+import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import Toast from 'react-native-toast-message';
 
 interface NewHabitModalProps {
     modalVisible: boolean;
@@ -22,6 +24,16 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
     });
 
     const handleCreateHabit = () => {
+        if (form.name == null || form.name == "") {
+            Toast.show({
+                type: 'info',
+                text1: 'Nombre vacío.',
+                text2: 'Necesitas un nombre para el HÁBITO.',
+                position: 'bottom',
+            });
+            return;
+        }
+
         const habit = {
             name: form.name,
             description: form.description,
@@ -30,8 +42,8 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
             updatedAt: new Date().toISOString(),
             completed: false,
             paused: false,
-            currentStreak:1,
-            totalCompleted:1,
+            currentStreak: 1,
+            totalCompleted: 1,
         };
 
         habitStore.createHabit(habit);
@@ -40,9 +52,12 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
     return (
         <BaseModal visible={modalVisible} onClose={() => setModalVisible(!modalVisible)}>
             <View style={{ gap: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1e1e1e' }}>
-                    Nuevo Hábito
-                </Text>
+                <View style={{ display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <FontAwesome6 name="bookmark" size={15} color="#1e1e1e" iconStyle='solid' />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1e1e1e' }}>
+                        Nuevo Hábito
+                    </Text>
+                </View>
 
                 <TextInput
                     placeholder="Nombre del hábito"
@@ -56,7 +71,7 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
                         borderTopWidth: 0,
                         borderLeftWidth: 0,
                         borderRightWidth: 0,
-                        color:'#1e1e1e'
+                        color: '#1e1e1e'
                     }}
                     placeholderTextColor={'#a3a3a3ff'}
                     onChangeText={value => setForm(prev => ({ ...prev, name: value }))}
@@ -73,7 +88,7 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
                         borderTopWidth: 0,
                         borderLeftWidth: 0,
                         borderRightWidth: 0,
-                        color:'#1e1e1e'
+                        color: '#1e1e1e'
                     }}
                     placeholderTextColor={'#a3a3a3ff'}
                     onChangeText={value => setForm(prev => ({ ...prev, description: value }))}
@@ -94,7 +109,8 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
                     }}
                     onPress={() => setModalVisible(!modalVisible)}
                 >
-                    <Text style={{ color: '#EFEFEF', fontSize: 18 }}>X</Text>
+                    <FontAwesome6 name="arrow-left" size={15} color="#fff" iconStyle='solid' />
+
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -108,7 +124,7 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
                     }}
                     onPress={() => { handleCreateHabit(), setModalVisible(!modalVisible) }}
                 >
-                    <Text style={{ color: '#EFEFEF', fontSize: 18 }}>V</Text>
+                    <FontAwesome6 name="check" size={15} color="#fff" iconStyle='solid' />
                 </TouchableOpacity>
             </View>
 

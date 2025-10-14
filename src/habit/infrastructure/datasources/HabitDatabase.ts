@@ -104,7 +104,7 @@ export const insertHabit = async (db: any, habit: any) => {
 
 export async function getHabits(db: any): Promise<Habit[]> {
   const results = await db.executeSql('SELECT * FROM habits;');
-  console.log("RAW DB RESULTS:", results);
+  // console.log("RAW DB RESULTS:", results);
   return results[0].rows.raw().map((row: HabitRow) => ({
     ...row,
     days: JSON.parse(row.days),
@@ -122,6 +122,20 @@ export async function markHabitDone(id: number, status: boolean, db: any): Promi
   try {
     await db.executeSql(query, params);
     console.log(`✅ Hábito ${id} actualizado a ${status ? 'completado' : 'pendiente'}`);
+  } catch (error) {
+    console.error("Error al marcar hábito como completado:", error);
+    throw error;
+  }
+}
+
+export async function resetHabitsPerDay(db:any):Promise<void>{
+  const query = `UPDATE habits SET completed = ?;`;
+  const params = [
+    false,
+  ];
+
+  try {
+    await db.executeSql(query, params);
   } catch (error) {
     console.error("Error al marcar hábito como completado:", error);
     throw error;
@@ -151,19 +165,30 @@ export const insertHabitLog = async (db: any, habitLog: HabitLog) => {
 };
 
 export async function getHabitsLogs(db: any): Promise<HabitLog[]> {
-  console.log("🔍 getHabitsLogs HabitDatabase");
-  const results = await db.executeSql('SELECT * FROM habit_logs;');
-  
-  const rows = results[0].rows;
+  try {
+    // console.log("Entramos a getHabitsLogs");
+// const db = await getDBConnection();
 
-  const logs: HabitLog[] = [];
+    const results = await db.executeSql('SELECT * FROM habit_logs;');
+    const rows = results[0].rows;
 
-  for (let i = 0; i < rows.length; i++) {
-    const item = rows.item(i);
-    logs.push(item);
+    // console.log("Se ejecuta la consulta");
+    // console.log("Número de registros obtenidos:", rows.length);
+
+    const logs: HabitLog[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const item = rows.item(i);
+      // console.log(`Registro ${i}:`, item);
+      logs.push(item);
+    }
+
+    return logs;
+  } catch (error) {
+    console.error("Error en getHabitsLogs:", error);
+    return [];
   }
-
-  return logs;
 }
+
 
 

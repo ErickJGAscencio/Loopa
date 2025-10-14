@@ -1,8 +1,10 @@
 import { Habit } from "habit/domain/entities/Habit";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { habitStore } from "../stores/HabitStore";
 import { habitLogStore } from "../stores/HabitLogStore";
+import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
+
 
 interface HabitCardProps {
     habit: Habit,
@@ -14,7 +16,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
     const [expanded, setExpanded] = useState<boolean>(false);
 
     const handleMarkHabit = () => {
-        if(habit!=null){
+        if (habit != null) {
             habitStore.markHabitDone(habit.id || 0, !completed);
             const habitLog = {
                 habit_id: habit.id!,
@@ -29,7 +31,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
         <View style={[styles.container]}>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-                    {editable &&
+                    {editable && !completed &&
                         <TouchableOpacity
                             style={{
                                 width: 25,
@@ -52,6 +54,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
                     <Text style={{
                         color: '#666666ff',
                         fontSize: 18,
+                        textDecorationLine: habit.completed ? 'line-through' : 'none',
                     }}>
                         {habit.name}
                     </Text>
@@ -60,13 +63,17 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
                     style={{
                         width: 25,
                         height: 25,
-                        backgroundColor: expanded ? '#e90000ff' : '#EDEDED',
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}
                     onPress={() => setExpanded(!expanded)}
                 >
-                    <Text>V</Text>
+                    {expanded ?
+                        <FontAwesome6 name="chevron-up" size={15} color="#3b3b3bff" iconStyle='solid' />
+                        :
+                        <FontAwesome6 name="chevron-down" size={15} color="#3b3b3bff" iconStyle='solid' />
+                    }
+
                 </TouchableOpacity>
             </View>
             {expanded &&
@@ -75,14 +82,14 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
 
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ width: '48%', backgroundColor: '#e6e6e6ff', borderRadius: 10, paddingBlock: 5, paddingInline: 15, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <Text>O</Text>
+                            <FontAwesome6 name="chart-line" size={15} color="#3b3b3bff" iconStyle='solid' />
                             <View>
                                 <Text style={{ fontSize: 12, color: '#898989ff' }}>Total</Text>
                                 <Text style={{ fontSize: 14, fontWeight: 600 }}>12 veces</Text>
                             </View>
                         </View>
                         <View style={{ width: '48%', backgroundColor: '#e6e6e6ff', borderRadius: 10, paddingBlock: 5, paddingInline: 15, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <Text>O</Text>
+                            <FontAwesome6 name="clock-rotate-left" size={15} color="#3b3b3bff" iconStyle='solid' />
                             <View>
                                 <Text style={{ fontSize: 12, color: '#898989ff' }}>Útima Vez</Text>
                                 <Text style={{ fontSize: 14, fontWeight: 600 }}>7 oct</Text>
@@ -90,7 +97,8 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
                         </View>
                     </View>
                     <View style={{ width: '100%', backgroundColor: '#E7D4CD', borderRadius: 10, paddingBlock: 5, paddingInline: 15, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                        <Text>🔥</Text>
+                        <FontAwesome6 name="fire" size={15} color="#ED8936" iconStyle='solid' />
+
                         <View>
                             <Text style={{ fontSize: 12, color: '#898989ff' }}>Racha Actual</Text>
                             <Text style={{ fontSize: 14, fontWeight: 600, color: '#ED8936' }}>5 ías</Text>

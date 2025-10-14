@@ -20,7 +20,6 @@ class HabitLogStore {
   }
 
   async loadLogs() {
-    console.log("HabitLogStore");
     const usecase = new GetHabitsLogs(habitLogRepositoryImpl);
     const logs = await usecase.execute();
     this.setLogs(logs);

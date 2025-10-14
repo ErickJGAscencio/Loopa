@@ -6,6 +6,7 @@ import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts'
 import { getDBConnection, getHabits, insertHabit, markHabitDone } from '../datasources/HabitDatabase';
 
 export class HabitRepositoryImpl implements IHabitRepository {
+    
     async create(habit: Habit) {
         const db = await getDBConnection();
         await insertHabit(db, habit); // serializa y ejecuta SQL
@@ -14,7 +15,7 @@ export class HabitRepositoryImpl implements IHabitRepository {
     async getAll(): Promise<Habit[]> {
         const db = await getDBConnection();
         const habits = await getHabits(db);
-        console.log("HÁBITOS DESDE REPO:", habits);
+        // console.log("--------------------HÁBITOS DESDE REPO:", habits);
         return habits;
     }
 
