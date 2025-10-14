@@ -4,19 +4,18 @@ import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Animated } from '
 import { HabitCard } from "../components/HabitCard";
 import { observer } from "mobx-react-lite";
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
-import LinearGradient from 'react-native-linear-gradient';
 import { NewHabitModal } from '../components/NewHabitModal';
 import { useNavigation } from '@react-navigation/native';
 import { habitLogStore } from '../stores/HabitLogStore';
 import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
+import { ProgressCard } from '../components/ProgressCard';
 
 const HabitListScreen = observer(() => {
-  //   const { habits, loadHabits, createHabit } = habitStore;
-  const widthAnim = useRef(new Animated.Value(0)).current;
   const today = new Date();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const navigation = useNavigation();
   const [sectionActive, setSectionActive] = useState<boolean>(true);
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchHabits = async () => {
@@ -32,45 +31,35 @@ const HabitListScreen = observer(() => {
     fetchHabitsLogs();
   }, []);
 
-  useEffect(()=>{
-    Animated.timing(widthAnim,{
-      toValue: habitStore.completedPorcent,
-      duration:500,
-      useNativeDriver:false,
-    }).start();
-  },[habitStore.completedPorcent])
-
-  const widthInterpolated = widthAnim.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0%', '100%'],
-  });
-
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
           style={{
-            width:35,
-            height:35,
+            width: 35,
+            height: 35,
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          // onPress={() => setModalVisible(true)}
+        onPress={() => {
+  console.log(showMenu);       // ← muestra el valor actual (antes del cambio)
+  setShowMenu(!showMenu);      // ← programa el cambio
+}}
         >
-          <FontAwesome6 name="user" size={20} color="#1e1e1e" iconStyle='solid' />
+          <FontAwesome6 name="bars" size={20} color="#1e1e1e" iconStyle='solid' />
         </TouchableOpacity>
       ),
       headerRight: () => (
         <TouchableOpacity
           style={{
-            width:35,
-            height:35,
+            width: 35,
+            height: 35,
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          // onPress={() => setModalVisible(true)}
+        // onPress={() => setModalVisible(true)}
         >
-          <FontAwesome6 name="bell" size={20} color="#1e1e1e" iconStyle='solid' />
+          <FontAwesome6 name="bell" size={23} color="#1e1e1e" iconStyle='solid' />
         </TouchableOpacity>
 
       ),
@@ -79,28 +68,7 @@ const HabitListScreen = observer(() => {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', padding: 20, backgroundColor: '#ededed', gap: 10 }}>
-      <LinearGradient
-        colors={['#1e1e1e', '#D0D0D0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ width: '100%', backgroundColor: '#1e1e1e', padding: 15, borderRadius: 15 }}
-      >
-        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ display: 'flex', flexDirection: 'row' }}>
-            <Text style={{ color: '#EFEFEF', fontSize: 35, fontWeight: 600 }}>{habitStore.completedPorcent}%</Text>
-            <Text style={{ color: '#EFEFEF', fontSize: 10 }}>COMPLETADO</Text>
-          </View>
-
-          <View style={{ display: 'flex', flexDirection: 'column' }}>
-            <Text style={{ color: '#EFEFEF', fontSize: 20, fontWeight: 600, textAlign: 'right' }}>{habitStore.totalHabitsCompleted}/{habitStore.totalHabits}</Text>
-            <Text style={{ color: '#EFEFEF', fontSize: 10, textAlign: 'right' }}>HÁBITOS</Text>
-          </View>
-        </View>
-
-        <View style={{ backgroundColor: '#e7e7e7ed', width: '100%', height: 10, borderRadius: 10 }}>
-          <Animated.View style={{ backgroundColor: '#1e1e1e', height: 10, borderRadius: 10, width: widthInterpolated }} />
-        </View>
-      </LinearGradient>
+      <ProgressCard />
 
       <View style={{
         backgroundColor: '#e4e4e4ff',
@@ -115,7 +83,7 @@ const HabitListScreen = observer(() => {
           style={[styles.button, sectionActive ? styles.sectionActive : styles.sectionDesactive]}
           onPress={() => setSectionActive(true)}
         >
-          <FontAwesome6 name="list-check" size={15} color= {sectionActive ? "#727272ff":"#3b3b3bff"} iconStyle='solid' />
+          <FontAwesome6 name="list-check" size={15} color={sectionActive ? "#727272ff" : "#3b3b3bff"} iconStyle='solid' />
           <Text style={[styles.sectionText, sectionActive ? styles.activeText : styles.inactiveText]}>
             Hábitos
           </Text>
@@ -125,7 +93,7 @@ const HabitListScreen = observer(() => {
           style={[styles.button, sectionActive ? styles.sectionDesactive : styles.sectionActive]}
           onPress={() => setSectionActive(false)}
         >
-          <FontAwesome6 name="calendar-days" size={15} color= {sectionActive ? "#727272ff":"#3b3b3bff"} iconStyle='solid' />
+          <FontAwesome6 name="calendar-days" size={15} color={sectionActive ? "#727272ff" : "#3b3b3bff"} iconStyle='solid' />
           <Text style={[styles.sectionText, sectionActive ? styles.inactiveText : styles.activeText]}>
             Calendario
           </Text>
@@ -136,7 +104,6 @@ const HabitListScreen = observer(() => {
       {sectionActive ? (
         <>
           <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>
-
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               <Text style={{ color: '#1e1e1e', fontSize: 20, fontWeight: 600 }}>
                 {today.toLocaleString("es-MX", { month: "long", day: "numeric" })}
@@ -167,11 +134,25 @@ const HabitListScreen = observer(() => {
         <MonthlyCalendar />
       )}
 
-
-
-
       <NewHabitModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
 
+      {showMenu && 
+        <View style={styles.sideBar}>
+          <Text style={styles.title}>Menú</Text>
+
+          <TouchableOpacity style={styles.item} onPress={() => console.log('Ir a hábitos')}>
+            <Text style={styles.itemText}>Hábitos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.item} onPress={() => console.log('Ir a calendario')}>
+            <Text style={styles.itemText}>Calendario</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.item} onPress={() => ("")}>
+            <Text style={styles.itemText}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      }
     </View>
   );
 });
@@ -179,6 +160,32 @@ const HabitListScreen = observer(() => {
 export default HabitListScreen;
 
 const styles = StyleSheet.create({
+  sideBar: {
+    flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#EFEFEF',
+    zIndex: 2,
+    width: '70%',
+    padding: 20,
+  },
+  title: {
+    color: '#1e1e1e',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  item: {
+    paddingVertical: 12,
+    borderBottomColor: '#1e1e1e',
+    borderBottomWidth: 0.5,
+  },
+  itemText: {
+    color: '#1e1e1e',
+    fontSize: 16,
+  },
   button: {
     width: '45%',
     borderRadius: 8,
