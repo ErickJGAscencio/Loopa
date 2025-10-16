@@ -2,12 +2,13 @@
 
 import { Habit } from "habit/domain/entities/Habit";
 import { HabitRepositoryImpl } from '../../infrastructure/repositories/HabitRepositoryImpl';
-import { CreateHabit } from "../../application/usecases/createHabit";
+import { CreateHabit } from "../../application/usecases/CreateHabit";
 import { GetHabits } from '../../application/usecases/getHabits';
 import { action, makeAutoObservable } from "mobx";
 import { MarkHabitDone } from "../../application/usecases/markHabitDone";
-import { HabitLog } from "habit/domain/entities/HabitLog";
 import { habitLogStore } from '../stores/HabitLogStore';
+import { MarkHabitPause } from "../../application/usecases/MarkHabitPaused";
+import { DeleteHabit } from "../../application/usecases/DeleteHabit";
 
 const habitRepositoryImpl = new HabitRepositoryImpl();
 
@@ -27,7 +28,7 @@ class HabitStore {
 
     get totalHabits(): number {
         // console.log("Total Habitos: ", this.habits.length);
-        return this.habits.length;
+        return this.habits.filter(habit => !habit.paused).length;
     }
 
     get totalHabitsCompleted(): number {
@@ -42,8 +43,8 @@ class HabitStore {
 
     get completedPorcent(): number {
         // console.log("Total Habitos: ", this.habits.length);
-        const total = this.habits.length;
-        const done = this.habits.filter(habit => habit.completed).length;
+        const total = this.habits.filter(habit => !habit.paused).length;
+        const done = this.habits.filter(habit => habit.completed && !habit.paused).length;
         return total === 0 ? 0 : Math.round((done / total) * 100);
     }
 
@@ -71,10 +72,11 @@ class HabitStore {
         };
     }
 
-
     async loadHabits() {
         const usecase = new GetHabits(habitRepositoryImpl);
         const habits = await usecase.execute();
+    // console.log("HÁBITOS DESDE STORE:", habits);
+
         this.setHabits(habits);
     }
 
@@ -84,9 +86,21 @@ class HabitStore {
         await this.loadHabits();
     }
 
-    async markHabitDone(id: number, status: boolean) {
+    async markHabitDone(id: number, status: boolean, total_completed:number, current_streak:number) {
         const usecase = new MarkHabitDone(habitRepositoryImpl);
-        await usecase.execute(id, status);
+        await usecase.execute(id, status, total_completed, current_streak);
+        await this.loadHabits();
+    }
+
+    async markPaused(id:number, status:boolean){
+        const usecase = new MarkHabitPause(habitRepositoryImpl);
+        await usecase.execute(id,status);
+        await this.loadHabits();
+    }
+
+    async deleteHabit(id:number){
+        const usecase = new DeleteHabit(habitRepositoryImpl);
+        await usecase.execute(id);
         await this.loadHabits();
     }
 }

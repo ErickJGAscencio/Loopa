@@ -3,7 +3,7 @@
 
 import { Habit } from '../../domain/entities/Habit';
 import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
-import { getDBConnection, getHabits, insertHabit, markHabitDone } from '../datasources/HabitDatabase';
+import { deleteHabit, getDBConnection, getHabits, insertHabit, markHabitDone, markHabitPause } from '../datasources/HabitDatabase';
 
 export class HabitRepositoryImpl implements IHabitRepository {
     
@@ -19,8 +19,18 @@ export class HabitRepositoryImpl implements IHabitRepository {
         return habits;
     }
 
-    async markDone(id: number, status: boolean){
+    async markDone(id: number, status: boolean, total_completed:number, current_streak:number){
         const db = await getDBConnection();
-        await markHabitDone(id, status, db);
+        await markHabitDone(id, status, db, total_completed, current_streak);
+    }
+
+    async markPause(id:number, status:boolean){
+        const db = await getDBConnection();
+        await markHabitPause(id, status, db);
+    }
+
+    async deleteHabit(id:number){
+        const db = await getDBConnection();
+        await deleteHabit(id, db);
     }
 }

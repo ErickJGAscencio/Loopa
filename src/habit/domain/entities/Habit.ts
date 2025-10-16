@@ -5,10 +5,10 @@ export interface Habit {
     name: string;
     description?: string;
     days: Record<string, string>; // { mon: 1, tue: 0, ... }
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
     completed: boolean;
     paused: boolean;
-    currentStreak: number;
-    totalCompleted: number;
+    current_streak: number;
+    total_completed: number;
 }

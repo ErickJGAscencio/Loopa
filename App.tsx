@@ -6,23 +6,26 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NewAppScreen } from '@react-native/new-app-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { createTables, getDBConnection, resetHabitsPerDay } from './src/habit/infrastructure/datasources/HabitDatabase';
-import HabitListScreen from './src/habit/presentation/screens/HabitListScreen';
+import HomeScreen from './src/habit/presentation/screens/HomeScreen';
+import HabitsScreen from './src/habit/presentation/screens/HabitsScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import { appStore } from './src/habit/presentation/stores/AppStore';
+import { SideBarMenu } from './src/habit/presentation/components/SideBarMenu';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const storeDate = async (value: string) => {
     try {
@@ -46,7 +49,7 @@ function App() {
       const db = await getDBConnection();
       try {
         await createTables(db);
-
+        appStore.setDbReady(true);
         Toast.show({
           type: 'success',
           text1: 'Base de datos creada',
@@ -121,19 +124,31 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="HabitList">
+        <SideBarMenu setVisible={() => setShowMenu(!showMenu)} visible={false} />
+        <Stack.Navigator initialRouteName="home">
           <Stack.Screen
-            name="HabitList"
-            component={HabitListScreen}
+            name="home"
+            component={HomeScreen}
             options={{
               title: 'LOOPA',
               headerTintColor: '#1e1e1e',
               headerStyle: { backgroundColor: '#ededed' },
               headerShadowVisible: false,
               headerTitleAlign: 'center',
-              headerLeft: () => <View/>,
+              headerLeft: () => <View />,
               headerRight: () => <View />, // placeholder
+            }}
+          />
+          <Stack.Screen
+            name="habits"
+            component={HabitsScreen}
+            options={{
+              title: 'Mis Hábitos',
+              headerTintColor: '#1e1e1e',
+              headerStyle: { backgroundColor: '#ededed' },
+              headerShadowVisible: false,
             }}
           />
         </Stack.Navigator>
@@ -142,24 +157,5 @@ function App() {
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;

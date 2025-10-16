@@ -38,12 +38,12 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
             name: form.name,
             description: form.description,
             days: { "Mon": "08:00" },
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             completed: false,
             paused: false,
-            currentStreak: 1,
-            totalCompleted: 1,
+            current_streak: 0,
+            total_completed: 0,
         };
 
         habitStore.createHabit(habit);
@@ -53,12 +53,11 @@ export function NewHabitModal({ modalVisible, setModalVisible }: NewHabitModalPr
         <BaseModal visible={modalVisible} onClose={() => setModalVisible(!modalVisible)}>
             <View style={{ gap: 16 }}>
                 <View style={{ display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                    <FontAwesome6 name="bookmark" size={15} color="#1e1e1e" iconStyle='solid' />
+                    <FontAwesome6 name="bookmark" size={20} color="#1e1e1e" iconStyle='solid' />
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1e1e1e' }}>
                         Nuevo Hábito
                     </Text>
                 </View>
-
                 <TextInput
                     placeholder="Nombre del hábito"
                     style={{

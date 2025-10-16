@@ -18,6 +18,7 @@
     "@react-navigation/elements": "^2.6.5",
     "@react-navigation/native": "^7.1.18",
     "@react-navigation/native-stack": "^7.3.27",
+    "@react-navigation/stack": "^7.4.10",
     "mobx": "^6.15.0",
     "mobx-react-lite": "^4.1.1",
     "react": "19.1.0",

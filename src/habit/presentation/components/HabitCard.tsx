@@ -14,10 +14,11 @@ interface HabitCardProps {
 export function HabitCard({ habit, editable }: HabitCardProps) {
     const [completed, setCompleted] = useState<boolean>(habit.completed);
     const [expanded, setExpanded] = useState<boolean>(false);
-
+    
     const handleMarkHabit = () => {
         if (habit != null) {
-            habitStore.markHabitDone(habit.id || 0, !completed);
+            console.log(habit.total_completed);
+            habitStore.markHabitDone(habit.id || 0, !completed, habit.total_completed, habit.current_streak);
             const habitLog = {
                 habit_id: habit.id!,
                 date: new Date().toISOString(),
@@ -54,7 +55,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
                     <Text style={{
                         color: '#666666ff',
                         fontSize: 18,
-                        textDecorationLine: habit.completed ? 'line-through' : 'none',
+                        textDecorationLine: editable && habit.completed ? 'line-through' : 'none',
                     }}>
                         {habit.name}
                     </Text>
@@ -85,14 +86,16 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
                             <FontAwesome6 name="chart-line" size={15} color="#3b3b3bff" iconStyle='solid' />
                             <View>
                                 <Text style={{ fontSize: 12, color: '#898989ff' }}>Total</Text>
-                                <Text style={{ fontSize: 14, fontWeight: 600 }}>12 veces</Text>
+                                <Text style={{ fontSize: 14, fontWeight: 600 }}>{habit.total_completed} veces</Text>
                             </View>
                         </View>
                         <View style={{ width: '48%', backgroundColor: '#e6e6e6ff', borderRadius: 10, paddingBlock: 5, paddingInline: 15, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                             <FontAwesome6 name="clock-rotate-left" size={15} color="#3b3b3bff" iconStyle='solid' />
                             <View>
                                 <Text style={{ fontSize: 12, color: '#898989ff' }}>Útima Vez</Text>
-                                <Text style={{ fontSize: 14, fontWeight: 600 }}>7 oct</Text>
+                                <Text style={{ fontSize: 14, fontWeight: 600 }}>
+                                    {new Date(habit.updated_at).toLocaleDateString('es-MX', {day:"numeric", month:'short'})}
+                                    </Text>
                             </View>
                         </View>
                     </View>
@@ -101,7 +104,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
 
                         <View>
                             <Text style={{ fontSize: 12, color: '#898989ff' }}>Racha Actual</Text>
-                            <Text style={{ fontSize: 14, fontWeight: 600, color: '#ED8936' }}>5 ías</Text>
+                            <Text style={{ fontSize: 14, fontWeight: 600, color: '#ED8936' }}>{habit.current_streak} días</Text>
                         </View>
                     </View>
                 </View>
@@ -113,7 +116,7 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#efefef",
-        padding: 16,
+        padding: 15,
         borderRadius: 15,
         borderWidth: 1,
         borderColor: "#9b9b9bff",

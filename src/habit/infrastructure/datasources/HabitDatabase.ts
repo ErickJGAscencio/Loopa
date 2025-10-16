@@ -30,6 +30,7 @@ export const getDBConnection = async () => {
   }
 };
 
+//TABLES
 export const createTables = async (db: any) => {
   try {
     await createHabitsTable(db);
@@ -112,8 +113,27 @@ export async function getHabits(db: any): Promise<Habit[]> {
   }));
 }
 
-export async function markHabitDone(id: number, status: boolean, db: any): Promise<void> {
-  const query = `UPDATE habits SET completed = ? WHERE id = ?;`;
+export async function markHabitDone(id: number, status: boolean, db: any, total_completed: number, current_streak: number): Promise<void> {
+  const query = `UPDATE habits SET completed = ?, total_completed = ?, current_streak = ?, updated_at = ? WHERE id = ?;`;
+  const params = [
+    status,
+    total_completed + 1,
+    current_streak + 1,
+    new Date().toISOString(),
+    id
+  ];
+
+  try {
+    await db.executeSql(query, params);
+    // console.log(`✅ Hábito ${id} actualizado a ${status ? 'completado' : 'pendiente'}`);
+  } catch (error) {
+    console.error("Error al marcar hábito como completado:", error);
+    throw error;
+  }
+}
+
+export async function markHabitPause(id: number, status: boolean, db: any) {
+  const query = 'UPDATE habits SET paused = ? WHERE id = ?';
   const params = [
     status,
     id
@@ -121,14 +141,25 @@ export async function markHabitDone(id: number, status: boolean, db: any): Promi
 
   try {
     await db.executeSql(query, params);
-    console.log(`✅ Hábito ${id} actualizado a ${status ? 'completado' : 'pendiente'}`);
   } catch (error) {
-    console.error("Error al marcar hábito como completado:", error);
-    throw error;
+    console.error("Error pausing habit: ", error);
   }
 }
 
-export async function resetHabitsPerDay(db:any):Promise<void>{
+export async function deleteHabit(id: number, db: any) {
+  const query = 'DELETE FROM habits WHERE id = ?';
+  const params = [
+    id
+  ]
+
+  try {
+    await db.executeSql(query, params);
+  } catch (error) {
+    console.error("Error deleting habit: ", error);
+  }
+}
+
+export async function resetHabitsPerDay(db: any): Promise<void> {
   const query = `UPDATE habits SET completed = ?;`;
   const params = [
     false,
@@ -166,20 +197,13 @@ export const insertHabitLog = async (db: any, habitLog: HabitLog) => {
 
 export async function getHabitsLogs(db: any): Promise<HabitLog[]> {
   try {
-    // console.log("Entramos a getHabitsLogs");
-// const db = await getDBConnection();
-
     const results = await db.executeSql('SELECT * FROM habit_logs;');
     const rows = results[0].rows;
-
-    // console.log("Se ejecuta la consulta");
-    // console.log("Número de registros obtenidos:", rows.length);
 
     const logs: HabitLog[] = [];
 
     for (let i = 0; i < rows.length; i++) {
       const item = rows.item(i);
-      // console.log(`Registro ${i}:`, item);
       logs.push(item);
     }
 
