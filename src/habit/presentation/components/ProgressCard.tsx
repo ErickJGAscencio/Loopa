@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import { habitStore } from "../stores/HabitStore";
+import { habitsStatsStore } from "../stores/HabitsStatsStore";
 
 
 export function ProgressCard() {
@@ -9,11 +9,11 @@ export function ProgressCard() {
 
   useEffect(() => {
     Animated.timing(widthAnim, {
-      toValue: habitStore.completedPorcent,
+      toValue: habitsStatsStore.completedPorcent,
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }, [habitStore.completedPorcent])
+  }, [habitsStatsStore.completedPorcent])
 
   const widthInterpolated = widthAnim.interpolate({
     inputRange: [0, 100],
@@ -29,12 +29,12 @@ export function ProgressCard() {
     >
       <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <Text style={{ color: '#EFEFEF', fontSize: 35, fontWeight: 600 }}>{habitStore.completedPorcent}%</Text>
+          <Text style={{ color: '#EFEFEF', fontSize: 35, fontWeight: 600 }}>{habitsStatsStore.completedPorcent}%</Text>
           <Text style={{ color: '#EFEFEF', fontSize: 10 }}>COMPLETADO</Text>
         </View>
 
         <View style={{ display: 'flex', flexDirection: 'column' }}>
-          <Text style={{ color: '#EFEFEF', fontSize: 20, fontWeight: 600, textAlign: 'right' }}>{habitStore.totalHabitsCompleted}/{habitStore.totalHabits}</Text>
+          <Text style={{ color: '#EFEFEF', fontSize: 20, fontWeight: 600, textAlign: 'right' }}>{habitsStatsStore.totalHabitsCompleted}/{habitsStatsStore.totalHabits}</Text>
           <Text style={{ color: '#EFEFEF', fontSize: 10, textAlign: 'right' }}>HÁBITOS</Text>
         </View>
       </View>

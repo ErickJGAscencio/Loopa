@@ -89,12 +89,17 @@ export function SideBarMenu({ setVisible, visible }: SideBarMenuProps) {
           <Text style={styles.itemText}>Mis Hábitos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('calendar')}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('resume'), setEnable(!enable)}}>
           <FontAwesome6 name="newspaper" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Resumen</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('settings')}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('reminders'), setEnable(!enable)}}>
+          <FontAwesome6 name="clock" size={15} color="#1e1e1e" iconStyle='regular' />
+          <Text style={styles.itemText}>Recordatorios</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('settings'), setEnable(!enable)}}>
           <FontAwesome6 name="gear" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Ajustes</Text>
         </TouchableOpacity>

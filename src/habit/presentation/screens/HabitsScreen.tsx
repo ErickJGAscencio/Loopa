@@ -9,8 +9,9 @@ import { NoticeAction } from '../components/NoticeAction';
 import { Habit } from 'habit/domain/entities/Habit';
 
 const HabitsScreen = observer(() => {
-  const [modalVisible, setModalVisible] = useState<boolean>(true);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [currentHabit, setCurrentHabit] = useState<Habit>();
+
   useEffect(() => {
     if (!appStore.dbReady) return;
 
@@ -21,12 +22,10 @@ const HabitsScreen = observer(() => {
   }, []);
 
 
-  return (
-    <><View style={{flex:1}}>
 
-      <ScrollView
-        contentContainerStyle={styles.container}
-        >
+  return (
+    <>
+      <ScrollView contentContainerStyle={[styles.container,{ flexGrow: 1 }]}>
         <View style={{ width: '100%' }}>
           <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', gap: 2, justifyContent: 'flex-end' }}>
             <FontAwesome5 name='bars' size={20} color={'#1e1e1e'} iconStyle='solid' />
@@ -42,7 +41,6 @@ const HabitsScreen = observer(() => {
       </ScrollView>
 
       <NoticeAction modalVisible={modalVisible} setModalVisible={setModalVisible} currentHabit={currentHabit}/>
-        </View>
     </>
   )
 })

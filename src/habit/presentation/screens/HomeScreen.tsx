@@ -1,6 +1,6 @@
 import { habitStore } from '../stores/HabitStore';
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { HabitCard } from "../components/HabitCard";
 import { observer } from "mobx-react-lite";
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
@@ -12,12 +12,16 @@ import { ProgressCard } from '../components/ProgressCard';
 import { SideBarMenu } from '../components/SideBarMenu';
 import { appStore } from '../stores/AppStore';
 
+import PushNotification from "react-native-push-notification";
+import { notificationStore } from '../stores/NotificationStore';
+
 const HomeScreen = observer(() => {
   const today = new Date();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const navigation = useNavigation();
   const [sectionActive, setSectionActive] = useState<boolean>(true);
   const [showMenu, setShowMenu] = useState<boolean>(false);
+
 
   useEffect(() => {
     if (!appStore.dbReady) return;
@@ -62,7 +66,38 @@ const HomeScreen = observer(() => {
 
       ),
     });
+    // createChannels();
   }, [navigation, showMenu]);
+
+  // const createChannels = () => {
+  //   PushNotification.createChannel({
+  //     channelId: "test-channel",
+  //     channelName: "Test Channel"
+  //   })
+  // }
+
+  // const handleNoti = () => {
+  //   PushNotification.cancelAllLocalNotifications();
+
+  //   PushNotification.localNotification({
+  //     channelId: "test-channel",
+  //     title: "Hola",
+  //     ticker: "My Notification Ticker",
+  // vibration: 800, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+
+  //     message: "es una otifca.",
+  //     bigText:"Por si tenias duda, sí, sí funcian y bien.",
+  //     color:"red",
+  //   });
+
+  //   // PushNotification.localNotificationSchedule({
+  //   //   channelId:"test-channel",
+  //   //   title:"ALARM!",
+  //   //   message:"HOLA CARA DE BOLA",
+  //   //   date: new Date(Date.now() + 10 *1000),
+  //   //   allowWhileIdle: true
+  //   // })
+  // }
 
   return (
     <>
@@ -100,6 +135,10 @@ const HomeScreen = observer(() => {
         </View>
 
 
+        <TouchableOpacity onPress={() => notificationStore.scheduleDailyReminders("UVATORN")}>
+          <Text>NOTI</Text>
+        </TouchableOpacity>
+
         {sectionActive ? (
           <>
             <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>
@@ -116,7 +155,7 @@ const HomeScreen = observer(() => {
                     alignItems: 'center',
                     borderRadius: 50,
                   }}
-                  onPress={() => {setModalVisible(true); console.log("ADASDASD")}}
+                  onPress={() => { setModalVisible(true); console.log("ADASDASD") }}
                 >
                   <FontAwesome6 name="plus" size={15} color="#fff" iconStyle='solid' />
                 </TouchableOpacity>

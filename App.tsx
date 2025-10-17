@@ -5,27 +5,52 @@
  * @format
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NewAppScreen } from '@react-native/new-app-screen';
 import { useEffect, useState } from 'react';
-import { StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { AppState, StatusBar, useColorScheme, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createTables, getDBConnection, resetHabitsPerDay } from './src/habit/infrastructure/datasources/HabitDatabase';
 import HomeScreen from './src/habit/presentation/screens/HomeScreen';
 import HabitsScreen from './src/habit/presentation/screens/HabitsScreen';
+import ResumeScreen from './src/habit/presentation/screens/ResumeScreen';
+import SettingsScreen from './src/habit/presentation/screens/SettingsScreen';
+import RemindersScreen from './src/habit/presentation/screens/RemindersScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { appStore } from './src/habit/presentation/stores/AppStore';
 import { SideBarMenu } from './src/habit/presentation/components/SideBarMenu';
+import { habitStore } from './src/habit/presentation/stores/HabitStore';
+import PushNotification from "react-native-push-notification";
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [showMenu, setShowMenu] = useState<boolean>(false);
+
+
+  
+
+  PushNotification.createChannel(
+    {
+      channelId: 'habits-channel',
+      channelName: 'Recordatorios de hábitos',
+      importance: 4,
+      vibrate: true,
+    },
+    (created:any) => console.log(`Canal creado: ${created}`)
+  );
+
+  PushNotification.configure({
+    onNotification: (notification:any) => {
+      console.log('Notificación recibida:', notification);
+    },
+    requestPermissions: Platform.OS === 'ios',
+  });
+
+
+
+
 
   const storeDate = async (value: string) => {
     try {
@@ -43,6 +68,18 @@ function App() {
       console.error("Error getting current date: ", error);
     }
   }
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        console.log('La app volvió al primer plano');
+        // Aquí puedes recargar datos, sincronizar, mostrar un mensaje, etc.
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
 
   useEffect(() => {
     const initDB = async () => {
@@ -82,43 +119,40 @@ function App() {
   };
 
   useEffect(() => {
-    const checkDate = async () => {
-      const date = await getStoreDate();
-      if (date == null) {
-        const currentDate = new Date();
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        console.log("La app volvió al primer plano");
 
-        const year = currentDate.getFullYear();
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses van del 0 a 11
-        const day = currentDate.getDate().toString().padStart(2, '0');
+        const handleResume = async () => {
+          const date = await getStoreDate();
 
-        const formattedDate = `${year}-${month}-${day}`;
+          const currentDate = new Date();
+          const year = currentDate.getFullYear();
+          const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+          const day = currentDate.getDate().toString().padStart(2, '0');
+          const formattedDate = `${year}-${month}-${day}`;
 
-        console.log(formattedDate); // Ejemplo: "2025/10/14"
+          if (date == null) {
+            console.log("No hay fecha guardada. Guardamos:", formattedDate);
+            storeDate(formattedDate);
+          } else {
+            console.log("Ya hay fecha:", date);
+            if (date !== formattedDate) {
+              console.log("La fecha cambió. Reiniciamos hábitos.");
+              storeDate(formattedDate);
+              await resetHabits();
+              habitStore.loadHabits();
+            }
+          }
+        };
 
-        storeDate(formattedDate)
-      } else {
-        console.log("Ya hay fecha");
-        const storedDate = await getStoreDate();
-        console.log("Stored date: ", storedDate);
-
-        const currentDate = new Date();
-
-        const year = currentDate.getFullYear();
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Los meses van del 0 a 11
-        const day = currentDate.getDate().toString().padStart(2, '0');
-
-        const formattedDate = `${year}-${month}-${day}`;
-
-        console.log(`Evaluamos: , ${formattedDate} != ${year}-${month}-${day}`)
-        if (storedDate != formattedDate) {
-          console.log("Sí es diferente");
-          storeDate(formattedDate);
-          await resetHabits();
-        }
+        handleResume(); // ← ejecutamos la función async
       }
-    };
-    checkDate();
+    });
+
+    return () => subscription.remove();
   }, []);
+
 
 
   return (
@@ -146,6 +180,36 @@ function App() {
             component={HabitsScreen}
             options={{
               title: 'Mis Hábitos',
+              headerTintColor: '#1e1e1e',
+              headerStyle: { backgroundColor: '#ededed' },
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="resume"
+            component={ResumeScreen}
+            options={{
+              title: 'Resumen',
+              headerTintColor: '#1e1e1e',
+              headerStyle: { backgroundColor: '#ededed' },
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="reminders"
+            component={RemindersScreen}
+            options={{
+              title: 'Recordatorios',
+              headerTintColor: '#1e1e1e',
+              headerStyle: { backgroundColor: '#ededed' },
+              headerShadowVisible: false,
+            }}
+          />
+          <Stack.Screen
+            name="settings"
+            component={SettingsScreen}
+            options={{
+              title: 'Configuraciones',
               headerTintColor: '#1e1e1e',
               headerStyle: { backgroundColor: '#ededed' },
               headerShadowVisible: false,

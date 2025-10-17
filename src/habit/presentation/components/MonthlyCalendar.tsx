@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { habitStore } from "../stores/HabitStore";
 import { HabitCard } from "./HabitCard";
 import { habitLogStore } from "../stores/HabitLogStore";
+import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 
 export function MonthlyCalendar() {
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed
+  const [month, setMonth] = useState<number>(today.getMonth()); // 0-indexed
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const totalDays = lastDay.getDate();
@@ -36,22 +37,30 @@ export function MonthlyCalendar() {
   //   fetchHabitsLogs();
   // }, []);
 
+  const handleChangeMonth = (decrement: boolean) => {
+    setMonth(prev => {
+      const newMonth = decrement ? prev - 1 : prev + 1;
+      return newMonth;
+    });
+  };
+
+
   return (
     <ScrollView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-          <TouchableOpacity>
-            <Text>
-              {`<`}
-            </Text>
+        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBlock: 10 }}>
+          <TouchableOpacity style={{ justifyContent: 'center', alignSelf: 'center' }} onPress={() => handleChangeMonth(true)}>
+            <FontAwesome6 name="chevron-left" iconStyle="solid" style={{ padding: 10 }} />
           </TouchableOpacity>
-          <Text style={styles.title}>
-            {today.toLocaleString("es-MX", { month: "long", year: "numeric" }).toUpperCase()}
+
+          <Text style={[styles.title]}>
+            {new Date(year, month).toLocaleString('es-MX', {
+              month: 'long', year: 'numeric'
+            }).toUpperCase()}
           </Text>
-          <TouchableOpacity>
-            <Text>
-              {`>`}
-            </Text>
+
+          <TouchableOpacity style={{ justifyContent: 'center', alignSelf: 'center' }} onPress={() => handleChangeMonth(false)}>
+            <FontAwesome6 name="chevron-right" iconStyle="solid" style={{ padding: 10 }} />
           </TouchableOpacity>
         </View>
 
@@ -64,17 +73,29 @@ export function MonthlyCalendar() {
           {daysArray.map((day, index) => {
             const isToday = day === today.getDate();
             const isSelected = day === daySelected;
+
             return (
               <View key={index} style={styles.dayBox}>
                 <TouchableOpacity
                   activeOpacity={0.4}
-                  onPress={() => setDaySelected(day)}
+                  onPress={() => setDaySelected(day)}                
+                  // style={[
+                  //   styles.dayContainer,
+                  //   isSelected && styles.daySelected,
+                  //   isToday && styles.todayContainer,
+                  //   // day != null && day < today.getDate() && styles.pastDayContainer,
+                  //   new Date(year, month, day).toLocaleDateString('es-MX', {
+                  //     day:'numeric', month:'short', year:'numeric'
+                  //   }) < today.toLocaleDateString() && styles.pastDayContainer
+                  // ]}
+
                   style={[
                     styles.dayContainer,
                     isSelected && styles.daySelected,
                     isToday && styles.todayContainer,
-                    day != null && day < today.getDate() && styles.pastDayContainer
+                    day != null && new Date(year, month, day).getTime() < today.setHours(0, 0, 0, 0) && styles.pastDayContainer
                   ]}
+
                 >
                   <Text
                     style={[
@@ -104,7 +125,7 @@ export function MonthlyCalendar() {
               <HabitCard key={habit.id} habit={habit} editable={false} />
             ))
             :
-            <Text style={{marginTop:10}}>No hay registros para este día.</Text>
+            <Text style={{ marginTop: 10 }}>No hay registros para este día.</Text>
           }
         </View>
       </View>
@@ -125,7 +146,6 @@ const styles = StyleSheet.create({
     color: "#1e1e1e",
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
     textAlign: "center",
   },
   grid: {

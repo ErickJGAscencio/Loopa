@@ -14,7 +14,7 @@ interface HabitInfoCardProps {
 
 export function HabitInfoCard({ habit, setModalVisible, setCurrentHabit }: HabitInfoCardProps) {
     const [showMenu, setShowMenu] = useState<boolean>(false);
-    setCurrentHabit(habit);
+    // setCurrentHabit(habit);
 
     const handlePauseHabit = () => {
         habitStore.markPaused(habit.id || 0, !habit.paused)
@@ -31,8 +31,8 @@ export function HabitInfoCard({ habit, setModalVisible, setCurrentHabit }: Habit
         <>
             <TouchableWithoutFeedback onPress={() => setShowMenu(false)}>
                 <View style={styles.card}>
-                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                        <Text style={{ fontSize: 19, fontWeight: 500 }}>{habit.name}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, gap:10 }}>
+                        <Text style={{ fontSize: 19, fontWeight: 500, width:'68%'}}>{habit.name}</Text>
                         <View style={{ display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'space-between' }}>
                             <View style={{
                                 display: 'flex',
@@ -106,7 +106,7 @@ export function HabitInfoCard({ habit, setModalVisible, setCurrentHabit }: Habit
                                 <Text style={[styles.itemText]}> {habit.paused ? "Activar" : "Pausar"}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.item} onPress={() => { /*handleDeleteHabit();*/ setModalVisible(true) }}>
+                            <TouchableOpacity style={styles.item} onPress={() => { setCurrentHabit(habit); setModalVisible(true) }}>
                                 <View style={{
                                     width: 25,
                                     alignItems: 'center',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: "#cacacaff",
+        borderColor: "rgba(195, 195, 195, 1)",
         paddingBlock: 20,
         marginBlock: 6,
         flexDirection: 'column',
@@ -141,10 +141,10 @@ const styles = StyleSheet.create({
     },
     block: {
         padding: 5,
-        backgroundColor: '#e9e9e9ff',
+        backgroundColor: '#ecececff',
         borderRadius: 6,
         borderWidth: 1,
-        borderColor: "#cdcdcdff",
+        borderColor: "#e3e3e3ff",
         width: '30%'
     },
     titleBlock: {

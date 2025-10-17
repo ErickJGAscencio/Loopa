@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   habits: undefined;
-  calendar: undefined;
+  resume: undefined;
+  reminders:undefined;
   settings: undefined;
 };
