@@ -88,7 +88,6 @@ function App() {
           text2: 'La tabla de hábitos está lista',
           position: 'bottom',
         });
-
       } catch (error) {
         Toast.show({
           type: 'error',

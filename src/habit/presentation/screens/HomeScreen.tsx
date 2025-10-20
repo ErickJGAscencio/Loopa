@@ -30,11 +30,12 @@ const HomeScreen = observer(() => {
       await habitStore.loadHabits();
     };
     fetchHabits();
+
     const fetchHabitsLogs = async () => {
       await habitLogStore.loadLogs();
     };
     fetchHabitsLogs();
-  }, []);
+  }, [appStore.dbReady]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -68,36 +69,6 @@ const HomeScreen = observer(() => {
     });
     // createChannels();
   }, [navigation, showMenu]);
-
-  // const createChannels = () => {
-  //   PushNotification.createChannel({
-  //     channelId: "test-channel",
-  //     channelName: "Test Channel"
-  //   })
-  // }
-
-  // const handleNoti = () => {
-  //   PushNotification.cancelAllLocalNotifications();
-
-  //   PushNotification.localNotification({
-  //     channelId: "test-channel",
-  //     title: "Hola",
-  //     ticker: "My Notification Ticker",
-  // vibration: 800, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-
-  //     message: "es una otifca.",
-  //     bigText:"Por si tenias duda, sí, sí funcian y bien.",
-  //     color:"red",
-  //   });
-
-  //   // PushNotification.localNotificationSchedule({
-  //   //   channelId:"test-channel",
-  //   //   title:"ALARM!",
-  //   //   message:"HOLA CARA DE BOLA",
-  //   //   date: new Date(Date.now() + 10 *1000),
-  //   //   allowWhileIdle: true
-  //   // })
-  // }
 
   return (
     <>
