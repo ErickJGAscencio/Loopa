@@ -21,6 +21,8 @@ import { appStore } from './src/habit/presentation/stores/AppStore';
 import { SideBarMenu } from './src/habit/presentation/components/SideBarMenu';
 import { habitStore } from './src/habit/presentation/stores/HabitStore';
 import PushNotification from "react-native-push-notification";
+import { notificationStore } from './src/habit/presentation/stores/NotificationStore';
+import { habitsStatsStore } from './src/habit/presentation/stores/HabitsStatsStore';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,31 +30,25 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
-
-  
-
-  PushNotification.createChannel(
+  PushNotification.createChannel( // Creamos el canal para las notificaciones
     {
       channelId: 'habits-channel',
       channelName: 'Recordatorios de hábitos',
       importance: 4,
       vibrate: true,
+      soundName: 'notification_1.mp3'
     },
-    (created:any) => console.log(`Canal creado: ${created}`)
+    (created: any) => console.log(`Canal creado: ${created}`)
   );
 
-  PushNotification.configure({
-    onNotification: (notification:any) => {
+  PushNotification.configure({ // Iniciamos la configuracion del canal
+    onNotification: (notification: any) => {
       console.log('Notificación recibida:', notification);
     },
     requestPermissions: Platform.OS === 'ios',
   });
 
-
-
-
-
-  const storeDate = async (value: string) => {
+  const storeDate = async (value: string) => { // Almacenamos la fecha  en localStorage
     try {
       await AsyncStorage.setItem('date', value)
     } catch (error) {
@@ -60,7 +56,7 @@ function App() {
     }
   }
 
-  const getStoreDate = async () => {
+  const getStoreDate = async () => { // Obtenemos la fecha guardada en localStorage
     try {
       const value = await AsyncStorage.getItem('date');
       return value;
@@ -69,19 +65,18 @@ function App() {
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { // Revisamos si la aplicacion ha cambiado de estado segundo-plano -> primer-plano
     const subscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
         console.log('La app volvió al primer plano');
-        // Aquí puedes recargar datos, sincronizar, mostrar un mensaje, etc.
+        // Aquí podemos recargar datos, sincronizar, mostrar un mensaje, etc.
       }
     });
 
     return () => subscription.remove();
   }, []);
 
-
-  useEffect(() => {
+  useEffect(() => { // Hacemos la conexión a la db y creamos tablas
     const initDB = async () => {
       const db = await getDBConnection();
       try {
@@ -105,7 +100,7 @@ function App() {
     initDB();
   }, []);
 
-  const resetHabits = async () => {
+  const resetHabits = async () => { // Reseteamos los habitos cada día
     const db = await getDBConnection();
     try {
       await resetHabitsPerDay(db);
@@ -118,7 +113,7 @@ function App() {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { // Revisamos si la aplicacion ha cambiado de estado segundo-plano -> primer-plano | Revisamos fechas
     const subscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
         console.log("La app volvió al primer plano");
@@ -152,6 +147,15 @@ function App() {
 
     return () => subscription.remove();
   }, []);
+
+
+  useEffect(() => { // Iniciamos las notificaciones de la app
+    async function initNotifications() {
+      await notificationStore.loadSettings();
+      notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
+    }
+    initNotifications();
+  }, [habitsStatsStore.activeHabits]);
 
 
 

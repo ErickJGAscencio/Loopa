@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Habit } from "../../domain/entities/Habit";
 import { habitLogStore } from "./HabitLogStore";
 import { habitStore } from "./HabitStore";
@@ -16,8 +17,12 @@ class HabitsStatsStore {
         return habitStore.habits.filter(habit => habit.completed).length;
     }
 
-    get habitsCompleted(): Habit[] {// Cantidad total de habitos completados
+    get activeHabits(): Habit[] {// Lista de habitos activos y no completados
 
+        return habitStore.habits.filter(habit => !habit.paused && !habit.completed);
+    }
+
+    get habitsCompleted(): Habit[] {// Lista de habitos completados
         return habitStore.habits.filter(habit => habit.completed);
     }
 
@@ -37,6 +42,15 @@ class HabitsStatsStore {
         return sorted[0] ?? null;
     }
 
+    get mostConsistentHabit(): Habit | null {
+        if (habitStore.habits.length === 0) return null;
+
+        const sorted = habitStore.habits
+            .filter(h => h.current_streak)
+            .sort((a, b) => b.current_streak - a.current_streak);
+
+        return sorted[0] ?? null;
+    }
 
     async frecuencyPorcent(id: number, startDate: string, endDate: string): Promise<number> {
         const habit = habitStore.habits.find(h => h.id === id && !h.paused);
@@ -67,6 +81,52 @@ class HabitsStatsStore {
         return totalDays === 0 ? 0 : Math.round((doneDays / totalDays) * 100);
     }
 
+    async updateStreak(habit: Habit) {
+        console.log("Fecha registrada:", habit.updated_at); // Ej: 2025-10-18T16:28:02.820Z
+
+        const today = new Date();
+        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        const lastDate = habit.updated_at ? new Date(habit.updated_at) : null;
+        const currentStreak = habit.current_streak ?? 0;
+
+        let newStreak = 1;
+
+        if (lastDate) {
+            const lastDateNormalized = new Date(
+                lastDate.getFullYear(),
+                lastDate.getMonth(),
+                lastDate.getDate()
+            );
+
+            const isSameDay =
+                todayDate.getFullYear() === lastDateNormalized.getFullYear() &&
+                todayDate.getMonth() === lastDateNormalized.getMonth() &&
+                todayDate.getDate() === lastDateNormalized.getDate();
+
+            const yesterday = new Date(todayDate);
+            yesterday.setDate(todayDate.getDate() - 1);
+
+            const isYesterday =
+                yesterday.getFullYear() === lastDateNormalized.getFullYear() &&
+                yesterday.getMonth() === lastDateNormalized.getMonth() &&
+                yesterday.getDate() === lastDateNormalized.getDate();
+
+            if (isSameDay) {
+                console.log("Ya se registró hoy");
+                return currentStreak;
+            } else if (isYesterday) {
+                console.log("Día siguiente");
+                newStreak = currentStreak + 1;
+            } else {
+                console.log("Se rompió la racha");
+                newStreak = 1;
+            }
+        }
+
+        console.log("Racha actualizada:", newStreak);
+        return newStreak;
+    }
 }
 
 export const habitsStatsStore = new HabitsStatsStore();

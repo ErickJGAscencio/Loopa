@@ -33,7 +33,8 @@ function SwitchItem({ label, value, onToggle }: SwitchProps) {
         }}>
             <Text style={{fontSize:16}}>{label}</Text>
             <TouchableOpacity
-                style={isDarkMode ? styles.SwitchContainerDark : styles.SwitchContainer}
+                // style={isDarkMode ? styles.SwitchContainerDark : styles.SwitchContainer}
+                style={styles.SwitchContainer}
                 activeOpacity={0.8}
                 onPress={() => {
                     const newState = !isOn;

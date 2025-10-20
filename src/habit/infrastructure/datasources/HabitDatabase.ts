@@ -118,7 +118,7 @@ export async function markHabitDone(id: number, status: boolean, db: any, total_
   const params = [
     status,
     total_completed + 1,
-    current_streak + 1,
+    current_streak,
     new Date().toISOString(),
     id
   ];

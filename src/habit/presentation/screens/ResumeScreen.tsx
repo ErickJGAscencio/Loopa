@@ -97,7 +97,7 @@ useEffect(() => {
               </View>
               <View style={{ display: 'flex', flexDirection: 'column' }}>
                 <Text style={{ fontSize: 12, color: '#929292ff' }}>Más constante</Text>
-                <Text style={{ fontSize: 15 }}>-</Text>
+                <Text style={{ fontSize: 15 }}>{habitsStatsStore.mostConsistentHabit?.name}</Text>
               </View>
             </View>
 

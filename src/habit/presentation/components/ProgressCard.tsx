@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { habitsStatsStore } from "../stores/HabitsStatsStore";
+import { useNavigation } from "@react-navigation/native";
 
 
 export function ProgressCard() {
   const widthAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
 
   useEffect(() => {
     Animated.timing(widthAnim, {
@@ -21,12 +23,13 @@ export function ProgressCard() {
   });
 
   return (
+<TouchableOpacity onPress={() => navigation.navigate('resume')} style={{ width: '100%', borderRadius: 15 }}>
     <LinearGradient
       colors={['#1e1e1e', '#D0D0D0']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{ width: '100%', backgroundColor: '#1e1e1e', padding: 15, borderRadius: 15 }}
-    >
+      >
       <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           <Text style={{ color: '#EFEFEF', fontSize: 35, fontWeight: 600 }}>{habitsStatsStore.completedPorcent}%</Text>
@@ -43,5 +46,6 @@ export function ProgressCard() {
         <Animated.View style={{ backgroundColor: '#1e1e1e', height: 10, borderRadius: 10, width: widthInterpolated }} />
       </View>
     </LinearGradient>
+      </TouchableOpacity>
   )
 }

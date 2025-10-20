@@ -1,143 +1,175 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { BaseModal } from "./BaseModal";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
+import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
+import LinearGradient from "react-native-linear-gradient";
+import { notificationStore } from "../stores/NotificationStore";
 
 interface TimePickerProps {
-    visible: boolean;
-    setShowPicker: (value: boolean) => void;
-    onSelectTime: (value: string) => void;
-}
-
-interface PickerTimeForm {
-    hour: string;
-    minutes?: string;
-    meridian: boolean // 0/false = am | 1/true = pm
+  visible: boolean;
+  setShowPicker: (value: boolean) => void;
+  onSelectTime: (value: string) => void;
 }
 
 export function TimePicker({ visible, setShowPicker, onSelectTime }: TimePickerProps) {
-    const [form, setForm] = useState<PickerTimeForm>({
-        hour: '8',
-        minutes: '0',
-        meridian: false
-    });
+  const [selectedHour, setSelectedHour] = useState<string>("08:00");
+  const flatListRef = useRef<FlatList>(null);
 
-    const formatHour = (value: string): string => {
-        const numeric = value.replace(/[^0-9]/g, '');
-        let hour = parseInt(numeric);
+  const hours = [
+    "01:00", "02:00", "03:00", "04:00", "05:00",
+    "06:00", "07:00", "08:00", "09:00", "10:00",
+    "11:00", "12:00", "13:00", "14:00", "15:00",
+    "16:00", "17:00", "18:00", "19:00", "20:00",
+    "21:00", "22:00", "23:00", "00:00"
+  ];
 
-        if (isNaN(hour)) return '1';
-        if (hour > 12) hour = hour % 10 || 12;
-        if (hour === 0) hour = 12;
+  const ITEM_HEIGHT = 50;
+  const VISIBLE_ITEMS = 5;
+  const CENTER_OFFSET = (ITEM_HEIGHT * VISIBLE_ITEMS) / 2 - ITEM_HEIGHT / 2;
 
-        return hour.toString();
-    };
+  // 🔹 Al montar, mover el scroll a la hora seleccionada
+  useEffect(() => {
+    if (visible) {
+      const index = hours.indexOf(selectedHour);
+      if (index !== -1 && flatListRef.current) {
+        flatListRef.current.scrollToOffset({
+          offset: index * ITEM_HEIGHT,
+          animated: false,
+        });
+      }
+    }
+  }, [visible]);
 
-    const handleCreateTime = () => {
-        const correctedHour = formatHour(form.hour);
-        const hour = parseInt(correctedHour);
-        const minutes = form.minutes?.padStart(2, '0') ?? '00';
+  // 🔹 Detectar cuál hora está centrada
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetY = e.nativeEvent.contentOffset.y;
+    const index = Math.round(offsetY / ITEM_HEIGHT);
+    const hour = hours[index];
+    if (hour && hour !== selectedHour) {
+      setSelectedHour(hour);
+    }
+  };
 
-        let finalHour = form.meridian
-            ? hour === 12 ? 12 : hour + 12
-            : hour === 12 ? 0 : hour;
+  const handleConfirm = () => {
+    if (selectedHour) {
+      console.log("Índice:", hours.indexOf(selectedHour));
+      // onSelectTime(hours.indexOf(selectedHour));
+      notificationStore.setReminderHours([
+        ...notificationStore.reminderHours,
+        hours.indexOf(selectedHour+1)
+      ]);
 
-        const formatted = `${finalHour.toString().padStart(2, '0')}:${minutes}`;
-        console.log(`Hora seleccionada: ${formatted}`);
-        onSelectTime(formatted);
+      setShowPicker(false);
+    }
+  };
 
-        setShowPicker(!visible);
-    };
+  if (!visible) return null;
 
-    return (
-        <>{visible &&
-            <BaseModal visible={visible} onClose={() => setShowPicker(!visible)}>
-                <View style={{ gap: 16 }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1e1e1e' }}>
-                        Seleccione Hora
-                    </Text>
-                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+  return (
+    <View style={styles.container}>
+      {/* Efectos de fade */}
+      <LinearGradient
+        colors={["#fff", "rgba(255,255,255,0.4)"]}
+        style={styles.fadeTop}
+      />
+      <LinearGradient
+        colors={["rgba(255,255,255,0.4)", "#fff"]}
+        style={styles.fadeBottom}
+      />
 
-                        <View style={{ alignItems: 'center', width: '30%', justifyContent: 'center', alignContent: 'center' }}>
-                            <TextInput
-                                style={{ padding: 10, borderBottomWidth: 0.5, fontSize: 40, width: '100%', textAlign: 'center' }}
-                                defaultValue="8"
-                                keyboardType='numeric'
-                                maxLength={2}
-                                onChangeText={value => setForm(prev => ({ ...prev, hour: value }))}
-                            />
-                            <Text style={{ fontSize: 16 }}>Hora</Text>
-                        </View>
-                        <Text>:</Text>
-                        <View style={{ alignItems: 'center', width: '30%', justifyContent: 'center', alignContent: 'center' }}>
-                            <TextInput
-                                style={{ padding: 10, borderBottomWidth: 0.5, fontSize: 40, width: '100%', textAlign: 'center' }}
-                                defaultValue="00"
-                                keyboardType='numeric'
-                                maxLength={2}
-                                onChangeText={value => setForm(prev => ({ ...prev, minutes: value }))}
-                            />
-                            <Text style={{ fontSize: 16 }}>Minuto</Text>
-                        </View>
-                        <View>
-                            <View style={{ display: 'flex', flexDirection: 'column' }}>
-                                <TouchableOpacity
-                                    style={[styles.meridianButton, form.meridian ? "" : styles.meridianSelected, { borderStartStartRadius: 10, borderTopEndRadius: 10 }]}
-                                    onPress={() => setForm(prev => ({ ...prev, meridian: false }))}
-                                >
-                                    <Text style={[{ fontSize: 20, }, form.meridian ? { color: '#111l' } : { color: '#fff' },]}>AM</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.meridianButton, form.meridian ? styles.meridianSelected : "", { borderEndEndRadius: 10, borderBottomStartRadius: 10 }]}
-                                    onPress={() => setForm(prev => ({ ...prev, meridian: true }))}
-                                >
-                                    <Text style={[{ fontSize: 20, }, form.meridian ? { color: '#fff' } : { color: '#111' },]}>PM</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', bottom: 0, marginTop: 50 }}>
+      {/* Lista de horas */}
+      <FlatList
+        ref={flatListRef}
+        data={hours}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <View style={{ height: ITEM_HEIGHT, justifyContent: "center" }}>
+            <Text
+              style={[
+                styles.item,
+                selectedHour === item && styles.selectedItem,
+              ]}
+            >
+              {item}
+            </Text>
+          </View>
+        )}
+        showsVerticalScrollIndicator={false}
+        style={styles.list}
+        contentContainerStyle={{ paddingVertical: CENTER_OFFSET }}
+        getItemLayout={(_, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index,
+        })}
+        onMomentumScrollEnd={handleScroll}
+        snapToInterval={ITEM_HEIGHT}
+        decelerationRate="fast"
+      />
 
-                    <TouchableOpacity
-                        style={{
-                            width: 80,
-                            height: 45,
-                            backgroundColor: '#1e1e1e',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 50,
-                        }}
-                        onPress={() => setShowPicker(!visible)}
-                    >
-                        <Text style={{ color: '#EFEFEF', fontSize: 18 }}>X</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={{
-                            width: 80,
-                            height: 45,
-                            backgroundColor: '#1e1e1e',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 50,
-                        }}
-                        onPress={() => handleCreateTime()}
-                    >
-                        <Text style={{ color: '#EFEFEF', fontSize: 18 }}>V</Text>
-                    </TouchableOpacity>
-                </View>
-            </BaseModal>
-        }
-        </>
-    )
+      {/* Botón de confirmación */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleConfirm}>
+        <FontAwesome6 name="check" size={15} color="#fff" iconStyle="solid" />
+      </TouchableOpacity>
+    </View>
+  );
 }
 
+const ITEM_HEIGHT = 50;
+const VISIBLE_ITEMS = 5;
+
 const styles = StyleSheet.create({
-    meridianSelected: {
-        backgroundColor: '#1e1e1e'
-    },
-    meridianButton: {
-        borderWidth: 0.5,
-        padding: 8,
-    },
-})
+  container: {
+    height: ITEM_HEIGHT * VISIBLE_ITEMS + 60,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    overflow: "hidden",
+  },
+  list: {
+    width: "100%",
+  },
+  item: {
+    textAlign: "center",
+    fontSize: 26,
+    color: "#333",
+  },
+  selectedItem: {
+    fontWeight: "bold",
+    color: "#fff",
+    backgroundColor: "#000",
+    borderRadius: 10,
+    marginHorizontal: 50,
+    paddingVertical: 8,
+  },
+  saveButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 28,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  fadeTop: {
+    position: "absolute",
+    top: 0,
+    height: 40,
+    width: "100%",
+    zIndex: 1,
+  },
+  fadeBottom: {
+    position: "absolute",
+    bottom: 45,
+    height: 40,
+    width: "100%",
+    zIndex: 1,
+  },
+});

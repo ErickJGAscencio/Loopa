@@ -134,11 +134,6 @@ const HomeScreen = observer(() => {
           </TouchableOpacity>
         </View>
 
-
-        <TouchableOpacity onPress={() => notificationStore.scheduleDailyReminders("UVATORN")}>
-          <Text>NOTI</Text>
-        </TouchableOpacity>
-
         {sectionActive ? (
           <>
             <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>

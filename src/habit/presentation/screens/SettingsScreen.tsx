@@ -3,23 +3,26 @@ import { ScrollView, View, Text, StyleSheet, Switch, TouchableOpacity } from 're
 import { observer } from 'mobx-react-lite';
 import SwitchItem from '../components/SwitchItem';
 import { notificationStore } from '../stores/NotificationStore';
+import { BaseModal } from '../components/BaseModal';
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
+import { TimePicker } from '../components/TimePicker';
+import Chip from '../components/Chip';
+import ModalNotificationTimes from '../components/ModalNotificationTimes';
 
 const SettingsScreen = observer(() => {
-  // Estados simulados (puedes reemplazar con settingsStore)
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  // Estados simulados (reemplazar con settingsStore)
   const [remindersEnabled, setRemindersEnabled] = useState(false);
-  const [theme, setTheme] = useState('Oscuro');
-  const [language, setLanguage] = useState('Español');
   const [cloudSyncEnabled, setCloudSyncEnabled] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
       {/* PREFERENCIAS DE USUARIO */}
       <Text style={styles.sectionTitle}>PREFERENCIAS DE USUARIO</Text>
-      
+
       <SwitchItem
         label="Activar Notificaciones"
-        value={notificationsEnabled}
+        value={notificationStore.enabled}
         onToggle={notificationStore.toggle}
       />
       <SwitchItem
@@ -28,19 +31,7 @@ const SettingsScreen = observer(() => {
         onToggle={setRemindersEnabled}
       />
 
-
-      {/* <PickerItem
-        label="Tema"
-        options={['Claro', 'Oscuro']}
-        value={theme}
-        onChange={setTheme}
-      />
-      <PickerItem
-        label="Idioma"
-        options={['Español', 'Inglés']}
-        value={language}
-        onChange={setLanguage}
-      /> */}
+      <ButtonItem label="Horario de notificaciones" onPress={() => (setModalVisible(!modalVisible))} />
 
       {/* SEGURIDAD Y PRIVACIDAD */}
       <Text style={styles.sectionTitle}>SEGURIDAD Y PRIVACIDAD</Text>
@@ -59,34 +50,14 @@ const SettingsScreen = observer(() => {
         value={cloudSyncEnabled}
         onToggle={setCloudSyncEnabled}
       />
+      
+      <ModalNotificationTimes visible={modalVisible} setModalVisible={setModalVisible} />
+
     </ScrollView>
   );
 });
 
 export default SettingsScreen;
-
-
-/** Subcomponentes institucionales **/
-
-// const SwitchItem = ({ label, value, onToggle }: { label: string; value: boolean; onToggle: (v: boolean) => void }) => (
-//   <View style={styles.itemRow}>
-//     <Text style={styles.itemLabel}>{label}</Text>
-//     <Switch value={value} onValueChange={onToggle} />
-//   </View>
-// );
-
-const PickerItem = ({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) => (
-  <View style={styles.itemRow}>
-    <Text style={styles.itemLabel}>{label}</Text>
-    <View style={styles.pickerContainer}>
-      {options.map(option => (
-        <TouchableOpacity key={option} onPress={() => onChange(option)} style={[styles.pickerOption, value === option && styles.pickerSelected]}>
-          <Text style={styles.pickerText}>{option}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  </View>
-);
 
 const ButtonItem = ({ label, onPress }: { label: string; onPress: () => void }) => (
   <TouchableOpacity onPress={onPress} style={styles.buttonItem}>
@@ -107,8 +78,6 @@ const LinkItem = ({ label, url }: { label: string; url: string }) => (
   </TouchableOpacity>
 );
 
-
-/** Estilos institucionales **/
 
 const styles = StyleSheet.create({
   container: {

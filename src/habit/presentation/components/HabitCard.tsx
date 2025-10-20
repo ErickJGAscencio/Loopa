@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { habitStore } from "../stores/HabitStore";
 import { habitLogStore } from "../stores/HabitLogStore";
 import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
+import { habitsStatsStore } from "../stores/HabitsStatsStore";
 
 
 interface HabitCardProps {
@@ -15,10 +16,14 @@ export function HabitCard({ habit, editable }: HabitCardProps) {
     const [completed, setCompleted] = useState<boolean>(habit.completed);
     const [expanded, setExpanded] = useState<boolean>(false);
     
-    const handleMarkHabit = () => {
+    const handleMarkHabit = async () => {
         if (habit != null) {
-            console.log(habit.total_completed);
-            habitStore.markHabitDone(habit.id || 0, !completed, habit.total_completed, habit.current_streak);
+
+            const current_streak = await habitsStatsStore.updateStreak(habit);
+            console.log(current_streak);
+            if(current_streak!= null)
+                habitStore.markHabitDone(habit.id || 0, !completed, habit.total_completed, current_streak);
+
             const habitLog = {
                 habit_id: habit.id!,
                 date: new Date().toISOString(),
