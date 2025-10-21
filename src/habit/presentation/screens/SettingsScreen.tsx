@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import SwitchItem from '../components/SwitchItem';
 import { notificationStore } from '../stores/NotificationStore';
-import { BaseModal } from '../components/BaseModal';
-import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
-import { TimePicker } from '../components/TimePicker';
-import Chip from '../components/Chip';
 import ModalNotificationTimes from '../components/ModalNotificationTimes';
 
 const SettingsScreen = observer(() => {
@@ -130,7 +126,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#1e1e1e',
-    fontSize: 14,
+    fontSize: 16,
   },
   linkText: {
     color: '#4da6ff',

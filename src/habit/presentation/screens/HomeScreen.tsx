@@ -12,9 +12,6 @@ import { ProgressCard } from '../components/ProgressCard';
 import { SideBarMenu } from '../components/SideBarMenu';
 import { appStore } from '../stores/AppStore';
 
-import PushNotification from "react-native-push-notification";
-import { notificationStore } from '../stores/NotificationStore';
-
 const HomeScreen = observer(() => {
   const today = new Date();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -67,7 +64,6 @@ const HomeScreen = observer(() => {
 
       ),
     });
-    // createChannels();
   }, [navigation, showMenu]);
 
   return (
