@@ -170,47 +170,104 @@ function App() {
       soundName: 'notification_1.mp3'
     }, (created: any) => console.log(`Canal creado: ${created}`));
   }
-
   useEffect(() => {
     async function initNotifications() {
-      await notificationStore.loadSettings();
-
-      // const notiEnabled = await AsyncStorage.getItem("notiEnabled");
-      // console.log("notiEnabled: ", notiEnabled);
-      // if (notiEnabled === "false") return;
-
       if (Platform.OS === 'android' && Platform.Version >= 31) {
         await checkExactAlarmPermission();
         const alarmReady = await checkExactAlarmStatus();
-
         if (!alarmReady) {
+          // if (Platform.OS === 'android' && Platform.Version >= 31) {
           Alert.alert(
             "Activar alarmas exactas",
             "Para que tus recordatorios funcionen correctamente, activa el permiso de 'Alarmas y recordatorios' en la configuración de la app.",
-            [
-              { text: "Cancelar", style: "cancel" },
-              {
-                text: "Ir a configuración",
-                onPress: async () => {
-                  const success = await Linking.openSettings();
-                  console.log("Intentamos abrir configuración:", success);
-                }
+            [{
+              text: "Cancelar",
+              style: "cancel"
+            }, {
+              text: "Ir a configuración",
+              onPress: async () => {
+                const success = await Linking.openSettings();
+                console.log("Intentamos abrir configuración:", success);
               }
-            ]
-          );
-          return;
+            }]);
+        } else {
+          await notificationStore.loadSettings(); // Esperamos a que se configure PushNotification y permisos 
+          if (Platform.OS === 'android' && Platform.Version >= 31) {
+            const notiEnabled = await AsyncStorage.getItem("notiEnabled");
+            if (notiEnabled === "false") return;
+            // no programamos si el usuario lo desactivó
+          }
+          try {
+            notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
+          } catch (error) {
+            console.error("Error al sincronizar notificaciones:", error);
+          }
+        }
+
+      } else {
+        await notificationStore.loadSettings(); // Esperamos a que se configure PushNotification y permiso
+        if (Platform.OS === 'android' && Platform.Version >= 31) {
+          const notiEnabled = await AsyncStorage.getItem("notiEnabled");
+          if (notiEnabled === "false") return; // no programamos si el usuario lo desactivó 
+        } try {
+          notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
+
+        } catch (error) {
+          console.error("Error al sincronizar notificaciones:", error);
         }
       }
 
-      try {
-        notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
-      } catch (error) {
-        console.error("Error al sincronizar notificaciones:", error);
+
+
+
+
+      await checkExactAlarmPermission();
+      const alarmReady = await checkExactAlarmStatus();
+      if (!alarmReady) {
+        if (Platform.OS === 'android' && Platform.Version >= 31) {
+          Alert.alert(
+            "Activar alarmas exactas",
+            "Para que tus recordatorios funcionen correctamente, activa el permiso de 'Alarmas y recordatorios' en la configuración de la app.",
+            [{
+              text: "Cancelar",
+              style: "cancel"
+            }, {
+              text: "Ir a configuración",
+              onPress: async () => {
+                const success = await Linking.openSettings();
+                // console.log("Intentamos abrir configuración:", success);
+              }
+            }]);
+
+        } else {
+          await notificationStore.loadSettings(); // Esperamos a que se configure PushNotification y permisos 
+          if (Platform.OS === 'android' && Platform.Version >= 31) {
+            const notiEnabled = await AsyncStorage.getItem("notiEnabled");
+            if (notiEnabled === "false") return;
+            // no programamos si el usuario lo desactivó
+          }
+          try {
+            notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
+          } catch (error) {
+            console.error("Error al sincronizar notificaciones:", error);
+          }
+        }
+      } else {
+        await notificationStore.loadSettings(); // Esperamos a que se configure PushNotification y permiso
+        if (Platform.OS === 'android' && Platform.Version >= 31) {
+          const notiEnabled = await AsyncStorage.getItem("notiEnabled");
+          if (notiEnabled === "false") return; // no programamos si el usuario lo desactivó 
+        } try {
+          notificationStore.syncHabitReminders(habitsStatsStore.activeHabits);
+
+        } catch (error) {
+          console.error("Error al sincronizar notificaciones:", error);
+        }
       }
     }
-
     initNotifications();
   }, [habitsStatsStore.activeHabits]);
+
 
   return (
     <SafeAreaProvider>

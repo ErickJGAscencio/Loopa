@@ -9,6 +9,8 @@ import { MarkHabitDone } from "../../application/usecases/markHabitDone";
 import { habitLogStore } from '../stores/HabitLogStore';
 import { MarkHabitPause } from "../../application/usecases/MarkHabitPaused";
 import { DeleteHabit } from "../../application/usecases/DeleteHabit";
+import { notificationStore } from "./NotificationStore";
+import { UpdateHabit } from "../../application/usecases/UpdateHabit";
 
 const habitRepositoryImpl = new HabitRepositoryImpl();
 
@@ -23,7 +25,8 @@ class HabitStore {
     }
 
     setHabits(habits: Habit[]) {
-        this.habits = habits;
+        this.habits = habits;        
+        // notificationStore.scheduleTypedReminders(habitStore.habits);
     }
 
     get habitsByDay(): (date: string) => Habit[] {//Hábitos realizados X día
@@ -68,6 +71,12 @@ class HabitStore {
     async deleteHabit(id:number){// Borra un hábito
         const usecase = new DeleteHabit(habitRepositoryImpl);
         await usecase.execute(id);
+        await this.loadHabits();
+    }
+
+    async updateHabit(id:number, name:string){
+        const usecase = new UpdateHabit(habitRepositoryImpl);
+        await usecase.execute(id, name);
         await this.loadHabits();
     }
 

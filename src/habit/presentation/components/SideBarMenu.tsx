@@ -84,22 +84,22 @@ export function SideBarMenu({ setVisible, visible }: SideBarMenuProps) {
 
         <Text style={styles.title}>Menú</Text>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('habits'), setEnable(!enable)}}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('habits'), setEnable(!enable); setVisible(false)}}>
           <FontAwesome6 name="bookmark" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Mis Hábitos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('resume'), setEnable(!enable)}}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('resume'), setEnable(!enable); setVisible(false)}}>
           <FontAwesome6 name="newspaper" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Resumen</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('reminders'), setEnable(!enable)}}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('reminders'), setEnable(!enable); setVisible(false)}}>
           <FontAwesome6 name="clock" size={15} color="#1e1e1e" iconStyle='regular' />
           <Text style={styles.itemText}>Recordatorios</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('settings'), setEnable(!enable)}}>
+        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('settings'), setEnable(!enable); setVisible(false)}}>
           <FontAwesome6 name="gear" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Ajustes</Text>
         </TouchableOpacity>

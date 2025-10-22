@@ -3,6 +3,8 @@ import { ScrollView, View, Text, StyleSheet } from "react-native";
 import { habitStore } from "../stores/HabitStore";
 import FontAwesome6 from "@react-native-vector-icons/fontawesome6";
 import { habitsStatsStore } from "../stores/HabitsStatsStore";
+import { useEffect, useState } from "react";
+import ProgressBar from "../components/ProgressBar";
 
 const ResumeScreen = observer(() => {
 
@@ -20,6 +22,15 @@ const ResumeScreen = observer(() => {
   // Formateo
   const formatDate = (date: Date) => date.toISOString().split('T')[0]; // "YYYY-MM-DD"
 
+// const [porcentaje, setPorcentaje] = useState(0);
+
+// useEffect(() => {
+//   const fetchPorcentaje = async () => {
+//     const result = await habitsStatsStore.frecuencyPorcent(habit.id || 0, formatDate(startDate), formatDate(endDate));
+//                     setPorcentaje(result);
+//   };
+//                     fetchPorcentaje();
+// }, [habit.id, startDate, endDate]);
 
   return (
     <>
@@ -61,32 +72,6 @@ const ResumeScreen = observer(() => {
 
           {/* <Text>Calendario con días completados (tipo heatmap)</Text> */}
 
-          {/* <View style={[styles.card, { display: 'flex', flexDirection: 'column', gap: 10, paddingBlock: 15 }]}>
-            <Text style={{ fontWeight: 500 }}>Frecuencia semanal por hábito</Text>
-            {habitStore.habits.map(habit => (
-              habit.paused != true && (
-                <View key={habit.id || 0} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text>{habit.name}</Text>
-                    <Text>{habitsStatsStore.frecuencyPorcent(habit.id || 0, formatDate(startDate), formatDate(endDate))}</Text>
-                  </View>
-                  <View style={{ backgroundColor: '#e7e7e7ed', width: '100%', height: 8, borderRadius: 10 }}>
-
-                    const [porcentaje, setPorcentaje] = useState(0);
-
-useEffect(() => {
-  const fetchPorcentaje = async () => {
-    const result = await habitsStatsStore.frecuencyPorcent(habit.id || 0, formatDate(startDate), formatDate(endDate));
-    setPorcentaje(result);
-  };
-  fetchPorcentaje();
-}, [habit.id, startDate, endDate]);
-                    <View style={{ backgroundColor: '#1e1e1e', height: 8, borderRadius: 10, width: `${habitsStatsStore.frecuencyPorcent(habit.id || 0, formatDate(startDate), formatDate(endDate)) || 0}%` }} />
-                  </View>
-                </View>
-              )
-            ))}
-          </View> */}
 
           <View style={[styles.card, { display: 'flex', flexDirection: 'column', gap: 10, paddingBlock: 15 }]}>
             <Text style={{ fontWeight: 500 }}>Hábitos destacados</Text>
@@ -111,7 +96,7 @@ useEffect(() => {
               </View>
             </View>
 
-            {/* <View style={{ display: 'flex', flexDirection: 'row', gap: 15 }}>
+             <View style={{ display: 'flex', flexDirection: 'row', gap: 15 }}>
               <View style={{ backgroundColor: '#e4e4e4ff', width: 40, height: 40, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}>
                 <FontAwesome6 name='pause' size={20} iconStyle="solid" />
               </View>
@@ -119,16 +104,23 @@ useEffect(() => {
                 <Text style={{ fontSize: 12, color: '#929292ff' }}>Con más pausas</Text>
                 <Text style={{ fontSize: 15 }}>Ejercicio 1 hora</Text>
               </View>
-            </View> */}
+            </View> 
 
           </View>
 
+          <View style={[styles.card, { display: 'flex', flexDirection: 'column', gap: 10, paddingBlock: 15 }]}>
+            <Text style={{ fontWeight: 500 }}>Frecuencia semanal por hábito</Text>
+            {habitStore.habits.map(habit => (
+              habit.paused != true && (
+                <ProgressBar key={habit.id} habit={habit}/>
+              )
+            ))}
+          </View>
           {/* <Text style={styles.title}>MOVITACIÓN</Text>
           <Text>Frases motivadoras según el progreso</Text> */}
 
-          {/* <Text style={styles.title}>LOGROS</Text> */}
-          {/* <Text>Logros desbloqueados (ej. “10 días seguidos”)</Text> */}
-          {/* <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+          {/* <Text style={styles.title}>LOGROS</Text>
+          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
             <View style={[styles.card, { width: '48%', justifyContent: 'center', alignItems: 'center' }]}>
               <View style={{ backgroundColor: '#1e1e1e', width: 45, height: 45, borderRadius: 50, alignItems: 'center', justifyContent: 'center', marginBlock: 15 }}>
                 <FontAwesome6 name='font-awesome' size={25} color={'#f6f6f6'} />

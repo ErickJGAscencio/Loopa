@@ -8,4 +8,5 @@ export interface IHabitRepository {
   markDone(id: number, status: boolean, total_completed:number, current_streak:number): Promise<void>;
   markPause(id:number, status: boolean):Promise<void>;
   deleteHabit(id:number):Promise<void>;
+  updateHabit(id:number, name:string):Promise<void>;
 }

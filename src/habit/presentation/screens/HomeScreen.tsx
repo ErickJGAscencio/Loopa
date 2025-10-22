@@ -104,7 +104,7 @@ const HomeScreen = observer(() => {
         {sectionActive ? (
           <>
             <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>
-              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
                 <Text style={{ color: '#1e1e1e', fontSize: 20, fontWeight: 600 }}>
                   {today.toLocaleString("es-MX", { month: "long", day: "numeric" })}
                 </Text>
@@ -117,17 +117,26 @@ const HomeScreen = observer(() => {
                     alignItems: 'center',
                     borderRadius: 50,
                   }}
-                  onPress={() => { setModalVisible(true); console.log("ADASDASD") }}
+                  onPress={() => { setModalVisible(true);}}
                 >
                   <FontAwesome6 name="plus" size={15} color="#fff" iconStyle='solid' />
                 </TouchableOpacity>
               </View>
 
-              <ScrollView style={{ width: '100%' }}>
-                {habitStore.habits.map(habit => (
-                  habit.paused != true && <HabitCard key={habit.id} habit={habit} editable={true} />
-                ))}
-              </ScrollView>
+              {habitStore.habits.length > 0 ?
+                (<ScrollView style={{ width: '100%' }}>
+                  {habitStore.habits.map(habit => (
+                    habit.paused != true && <HabitCard key={habit.id} habit={habit} editable={true} />
+                  ))}
+                </ScrollView>
+                ) : (
+                  <View style={{marginTop:20}} >
+                    <Text style={{ fontSize: 20, color: '#979797ff' }}>Aún no hay hábitos</Text>
+                  </View>
+                )
+              }
+
+
             </View>
           </>
         ) : (

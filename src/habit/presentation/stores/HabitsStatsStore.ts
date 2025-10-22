@@ -73,10 +73,12 @@ class HabitsStatsStore {
         const end = new Date(endDate);
 
         const effectiveStart = createdAt > start ? createdAt : start;
-        const totalDays = Math.ceil((end.getTime() - effectiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const totalDays = Math.ceil((end.getTime() - effectiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;//Con estas dos lineas evitamos que si el hbt fue creado un jueves, 
+                                                                                                            // se mantenga una relacion respecto a los dias faltantes d ela semana 
+                                                                                                            // y se pueda llegar al 100% sin necesidad de los dias previos al jueves
 
         const doneDays = logsInRange.length;
-        console.log(totalDays === 0 ? 0 : Math.round((doneDays / totalDays) * 100));
+        // console.log(totalDays === 0 ? 0 : Math.round((doneDays / totalDays) * 100));
 
         return totalDays === 0 ? 0 : Math.round((doneDays / totalDays) * 100);
     }

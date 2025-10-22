@@ -2,6 +2,7 @@ import { Habit } from "habit/domain/entities/Habit";
 import { action, makeObservable } from "mobx";
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { habitStore } from "./HabitStore";
 
 enum NotificationType {
   MotivationalReminder = 1,
@@ -55,16 +56,16 @@ function getNotificationMessage(type: NotificationType, habit?: Habit): string {
 
     case NotificationType.GeneralMotivation: {
       const messages = [
-        '¿Ya cumpliste tus hábitos hoy?',
-        'Tus hábitos te esperan. ¡Activa tu rutina!',
-        'No dejes pasar el día sin avanzar en tus hábitos.',
-        'Cada hábito cuenta. ¿Ya los hiciste hoy?',
-        'Tu constancia es clave. ¿Ya cumpliste tus hábitos?',
-        'Hoy es otro paso en tu camino. ¿Ya hiciste tus hábitos?',
-        'Los hábitos construyen tu futuro. ¿Ya los cumpliste?',
-        'Hazlo por ti. Hazlo hoy. ¿Ya cumpliste tus hábitos?',
-        'Tu rutina te fortalece. ¿Ya la activaste hoy?',
-        'Marca el día con acción. ¿Ya hiciste tus hábitos?',
+        '¿Qué hábito te gustaría empezar hoy?',
+        'Tu mejor versión comienza con un solo hábito. ¿Cuál será?',
+        'Crear un hábito es el primer paso hacia el cambio.',
+        'Hoy es un gran día para comenzar algo nuevo.',
+        'Los grandes logros empiezan con pequeños hábitos. ¡Empieza uno!',
+        '¿Qué hábito te acercaría a tus metas? ¡Empieza hoy!',
+        'Diseña tu rutina, crea tu hábito, transforma tu vida.',
+        'No necesitas hacerlo todo. Solo empieza con uno.',
+        '¿Listo para construir algo que te haga sentir orgulloso?',
+        'Tu futuro empieza con una decisión. ¿Qué hábito eliges hoy?',
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     }
@@ -96,14 +97,16 @@ class NotificationStore {
     try {
       this.reminderHours.forEach(hour => {
         const date = new Date();
-        date.setHours(hour, 31, 0, 0);
+        date.setHours(hour, 57, 0, 0);
         if (date < new Date()) date.setDate(date.getDate() + 1);
 
         if (habits.length > 0) {
+          console.log("YA HAY HÁBITOS");
           const pendingHabit = habits.find(h => !h.completed);
           const randomType = Math.random() < 0.5 ? NotificationType.MotivationalReminder : NotificationType.HabitReminder;
 
           if (randomType === NotificationType.HabitReminder && pendingHabit) {
+            console.log("RECORDATORIO DE HÁBITO NO CUMPLIDO");
             // Tipo 2: Recordatorio de hábito no cumplido
             PushNotification.localNotificationSchedule({
               channelId: 'habits-channel',
@@ -114,6 +117,7 @@ class NotificationStore {
               repeatType: 'day',
             });
           } else {
+            console.log("MOTIVACION GENERAL");
             // Tipo 1: Motivación general
             PushNotification.localNotificationSchedule({
               channelId: 'habits-channel',
@@ -126,7 +130,9 @@ class NotificationStore {
           }
         } else {
           // Tipo 3: Motivación si no hay hábitos activos
-          console.log("No hay ");
+          console.log("NO HAY HÁBITOS");
+          console.log("MOTIVACIÓN GENERAL");
+
           PushNotification.localNotificationSchedule({
             channelId: 'habits-channel',
             title: '¡Empieza hoy!',
@@ -157,6 +163,7 @@ class NotificationStore {
 
   setReminderHours(hours: number[]) {
     this.reminderHours = hours;
+    // this.scheduleTypedReminders(habitStore.habits);
   }
 
   setHoursSelected(hoursCount: number) {

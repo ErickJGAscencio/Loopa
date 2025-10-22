@@ -159,6 +159,19 @@ export async function deleteHabit(id: number, db: any) {
   }
 }
 
+export async function updateHabit(id:number, name:string, db:any){
+  const query = `UPDATE habits SET name = ? WHERE id = ?;`;
+  const params=[
+    name,
+    id
+  ]
+  try {
+    await db.executeSql(query, params);
+  } catch (error) {
+    console.error("Error updating habit: ", error);
+  }
+}
+
 export async function resetHabitsPerDay(db: any): Promise<void> {
   const query = `UPDATE habits SET completed = ?;`;
   const params = [
