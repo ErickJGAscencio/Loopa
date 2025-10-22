@@ -97,7 +97,7 @@ class NotificationStore {
     try {
       this.reminderHours.forEach(hour => {
         const date = new Date();
-        date.setHours(hour, 57, 0, 0);
+        date.setHours(hour, 0, 0, 0);
         if (date < new Date()) date.setDate(date.getDate() + 1);
 
         if (habits.length > 0) {

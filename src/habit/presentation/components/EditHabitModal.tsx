@@ -38,7 +38,8 @@ export function EditHabitModal({ modalVisible, setModalVisible, currentHabit }: 
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Nombre del hábito"
+          placeholder="Nuevo nombre"
+          placeholderTextColor={'#a6a6a6ff'}
         />
       </View>
       <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', bottom: 0 }}>
