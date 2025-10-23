@@ -17,7 +17,7 @@ export function SideBarMenu({ setVisible, visible }: SideBarMenuProps) {
   const [enable, setEnable] = useState<boolean>(false);
   const transXBack = useRef(new Animated.Value(0)).current;
   const fadeBack = useRef(new Animated.Value(0)).current;
-
+  
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) => {
@@ -34,7 +34,6 @@ export function SideBarMenu({ setVisible, visible }: SideBarMenuProps) {
 
   useEffect(() => {
     if (visible) {
-
       setEnable(true);
       Animated.timing(fadeBack, {
         toValue: 1, // antes era 100
@@ -84,22 +83,22 @@ export function SideBarMenu({ setVisible, visible }: SideBarMenuProps) {
 
         <Text style={styles.title}>Menú</Text>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('habits'), setEnable(!enable); setVisible(false)}}>
+        <TouchableOpacity style={styles.item} onPress={() => { navigation.navigate('habits'), setEnable(!enable); setVisible(false) }}>
           <FontAwesome6 name="bookmark" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Mis Hábitos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('resume'), setEnable(!enable); setVisible(false)}}>
+        <TouchableOpacity style={styles.item} onPress={() => { navigation.navigate('resume'), setEnable(!enable); setVisible(false) }}>
           <FontAwesome6 name="newspaper" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Resumen</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('reminders'), setEnable(!enable); setVisible(false)}}>
+{/* 
+        <TouchableOpacity style={styles.item} onPress={() => { navigation.navigate('reminders'), setEnable(!enable); setVisible(false) }}>
           <FontAwesome6 name="clock" size={15} color="#1e1e1e" iconStyle='regular' />
           <Text style={styles.itemText}>Recordatorios</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('settings'), setEnable(!enable); setVisible(false)}}>
+        <TouchableOpacity style={styles.item} onPress={() => { navigation.navigate('settings'), setEnable(!enable); setVisible(false) }}>
           <FontAwesome6 name="gear" size={15} color="#1e1e1e" iconStyle='solid' />
           <Text style={styles.itemText}>Ajustes</Text>
         </TouchableOpacity>
@@ -135,10 +134,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   item: {
-    display:'flex',
-    flexDirection:'row',
-    gap:10,
-    alignItems:'center',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
     paddingVertical: 12,
     borderBottomColor: '#1e1e1e',
     borderBottomWidth: 0.5,

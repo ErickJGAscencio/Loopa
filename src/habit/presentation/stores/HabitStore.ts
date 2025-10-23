@@ -2,15 +2,14 @@
 
 import { Habit } from "habit/domain/entities/Habit";
 import { HabitRepositoryImpl } from '../../infrastructure/repositories/HabitRepositoryImpl';
-import { CreateHabit } from "../../application/usecases/CreateHabit";
-import { GetHabits } from '../../application/usecases/getHabits';
+import { CreateHabit } from "../../application/usecases/create/CreateHabit";
+import { GetHabits } from '../../application/usecases/GetHabits';
 import { action, makeAutoObservable } from "mobx";
-import { MarkHabitDone } from "../../application/usecases/markHabitDone";
+import { MarkHabitDone } from "../../application/usecases/MarkHabitDone";
 import { habitLogStore } from '../stores/HabitLogStore';
 import { MarkHabitPause } from "../../application/usecases/MarkHabitPaused";
 import { DeleteHabit } from "../../application/usecases/DeleteHabit";
-import { notificationStore } from "./NotificationStore";
-import { UpdateHabit } from "../../application/usecases/UpdateHabit";
+import { UpdateHabit } from "../../application/usecases/update/UpdateHabit";
 
 const habitRepositoryImpl = new HabitRepositoryImpl();
 

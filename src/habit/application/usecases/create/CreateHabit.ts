@@ -1,5 +1,5 @@
-import { Habit } from '../../domain/entities/Habit.ts';
-import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
+import { Habit } from '../../../domain/entities/Habit.ts';
+import { IHabitRepository } from '../../../domain/repositories/IHabitRepository.ts';
 
 export class CreateHabit {
     constructor(private habitRepo: IHabitRepository) { }

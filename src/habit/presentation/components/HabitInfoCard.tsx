@@ -33,8 +33,8 @@ export function HabitInfoCard({ habit, setModalVisible, setEditModalVisible, set
       <TouchableWithoutFeedback onPress={() => setShowMenu(false)}>
         <View style={styles.card}>
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, gap: 10 }}>
-            <Text style={{ fontSize: 19, fontWeight: 500, width: '68%' }}>{habit.name}</Text>
-            <View style={{ display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 18, fontWeight: 500, width: '60%' }}>{habit.name}</Text>
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'flex-end' }}>
               <View style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -57,7 +57,7 @@ export function HabitInfoCard({ habit, setModalVisible, setEditModalVisible, set
             </View>
           </View>
 
-          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom:10}}>
             <View style={styles.block}>
               <Text style={styles.titleBlock}>Racha</Text>
               <Text style={styles.metric}>{habit.current_streak}</Text>
@@ -73,6 +73,11 @@ export function HabitInfoCard({ habit, setModalVisible, setEditModalVisible, set
               <Text>{new Date(habit.updated_at).toLocaleDateString("es-MX", { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
             </View>
           </View>
+          {habit.description &&
+            <>
+              <Text style={{ fontSize: 14 }}>{habit.description}</Text>
+            </>
+          }
           <View style={{ height: 1, backgroundColor: '#9f9f9fff', width: '100%', marginVertical: 10 }} />
           <Text style={{ fontSize: 12 }}>Creado el {new Date(habit.created_at).toLocaleDateString('es-MX', { day: "numeric", month: 'short', year: 'numeric' })}</Text>
           {/* {new Date(habit.updated_at).toLocaleDateString('es-MX', {day:"numeric", month:'short'})} */}
@@ -108,7 +113,13 @@ export function HabitInfoCard({ habit, setModalVisible, setEditModalVisible, set
                 <Text style={[styles.itemText, { color: '#1e1e1e' }]}>Editar</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.item} onPress={() => { handlePauseHabit(), setShowMenu(!showMenu) }} >
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => {
+                  handlePauseHabit(),
+                    setShowMenu(!showMenu)
+                }}
+              >
                 <View style={{
                   width: 25,
                   alignItems: 'center',
@@ -122,7 +133,14 @@ export function HabitInfoCard({ habit, setModalVisible, setEditModalVisible, set
                 <Text style={[styles.itemText]}> {habit.paused ? "Activar" : "Pausar"}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.item} onPress={() => { setCurrentHabit(habit); setModalVisible(true) }}>
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => {
+                  setCurrentHabit(habit)
+                  setModalVisible(true),
+                    setShowMenu(false);
+                }}
+              >
                 <View style={{
                   width: 25,
                   alignItems: 'center',

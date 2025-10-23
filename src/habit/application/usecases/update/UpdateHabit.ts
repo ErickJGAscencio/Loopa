@@ -1,4 +1,4 @@
-import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
+import { IHabitRepository } from '../../../domain/repositories/IHabitRepository';
 
 export class UpdateHabit {
   constructor(private habitRepo: IHabitRepository) { }

@@ -101,12 +101,12 @@ class NotificationStore {
         if (date < new Date()) date.setDate(date.getDate() + 1);
 
         if (habits.length > 0) {
-          console.log("YA HAY HÁBITOS");
+          // console.log("YA HAY HÁBITOS");
           const pendingHabit = habits.find(h => !h.completed);
           const randomType = Math.random() < 0.5 ? NotificationType.MotivationalReminder : NotificationType.HabitReminder;
 
           if (randomType === NotificationType.HabitReminder && pendingHabit) {
-            console.log("RECORDATORIO DE HÁBITO NO CUMPLIDO");
+            // console.log("RECORDATORIO DE HÁBITO NO CUMPLIDO");
             // Tipo 2: Recordatorio de hábito no cumplido
             PushNotification.localNotificationSchedule({
               channelId: 'habits-channel',
@@ -117,7 +117,7 @@ class NotificationStore {
               repeatType: 'day',
             });
           } else {
-            console.log("MOTIVACION GENERAL");
+            // console.log("MOTIVACION GENERAL");
             // Tipo 1: Motivación general
             PushNotification.localNotificationSchedule({
               channelId: 'habits-channel',
@@ -130,8 +130,8 @@ class NotificationStore {
           }
         } else {
           // Tipo 3: Motivación si no hay hábitos activos
-          console.log("NO HAY HÁBITOS");
-          console.log("MOTIVACIÓN GENERAL");
+          // console.log("NO HAY HÁBITOS");
+          // console.log("MOTIVACIÓN GENERAL");
 
           PushNotification.localNotificationSchedule({
             channelId: 'habits-channel',
@@ -144,7 +144,7 @@ class NotificationStore {
         }
       });
 
-      console.log("Recordatorios creados");
+      // console.log("Recordatorios creados");
     } catch (error) {
       console.error("Error creting alarms & reminders", error);
     }
@@ -152,7 +152,7 @@ class NotificationStore {
   }
 
   syncHabitReminders(habits: Habit[]) {
-    console.log(this.enabled);
+    // console.log(this.enabled);
     if (!this.enabled) return;
     this.scheduleTypedReminders(habits);
   }
@@ -179,10 +179,10 @@ class NotificationStore {
   }
 
   async toggle(enabled: boolean) {
-    console.log("Valor de actual de enabled: ", this.enabled);
+    // console.log("Valor de actual de enabled: ", this.enabled);
     this.enabled = enabled;
     await AsyncStorage.setItem("notiEnabled", enabled ? "true" : "false");
-    console.log("Nuevo valor de enabled: ", enabled);
+    // console.log("Nuevo valor de enabled: ", enabled);
 
     if (!enabled) this.cancelAll();
 
@@ -191,16 +191,20 @@ class NotificationStore {
   async loadSettings() {
     let value = await AsyncStorage.getItem("notiEnabled");
     this.enabled = value !== "false" ? true : false; // default: true
-    console.log("valor de enabled: ", this.enabled);
+    // console.log("valor de enabled: ", this.enabled);
 
     let stored = await AsyncStorage.getItem("reminderHours");
     if (stored == null) {
       await AsyncStorage.setItem("reminderHours", JSON.stringify(this.reminderHours));
       stored = await AsyncStorage.getItem("reminderHours");
     }
-    console.log("Horas almacenadas");
-    console.log(stored);
+    // console.log("Horas almacenadas");
+    // console.log(stored);
     this.reminderHours = stored ? JSON.parse(stored) : [];
+  }
+
+  syncReminders(){
+    
   }
 
 }

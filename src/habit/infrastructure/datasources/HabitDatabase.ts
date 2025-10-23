@@ -22,7 +22,7 @@ type HabitRow = {
 export const getDBConnection = async () => {
   try {
     const db = await SQLite.openDatabase({ name: 'loopa.db', location: 'default' });
-    console.log('✅ Base de datos abierta correctamente');
+    // console.log('Base de datos abierta correctamente');
     return db;
   } catch (error) {
     console.error('Error al abrir la base de datos:', error);
@@ -35,9 +35,9 @@ export const createTables = async (db: any) => {
   try {
     await createHabitsTable(db);
     await createHabitLogsTable(db);
-    console.log("✅ Tablas creadas correctamente");
+    // console.log("Tablas creadas correctamente");
   } catch (error) {
-    console.error("❌ Error creando tablas:", error);
+    console.error("Error creando tablas:", error);
   }
 };
 

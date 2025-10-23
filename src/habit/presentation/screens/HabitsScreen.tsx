@@ -47,7 +47,10 @@ const HabitsScreen = observer(() => {
         }
       </ScrollView>
 
-      <NoticeAction modalVisible={modalVisible} setModalVisible={setModalVisible} currentHabit={currentHabit} />
+      <NoticeAction 
+        modalVisible={modalVisible} 
+        setModalVisible={setModalVisible} 
+        currentHabit={currentHabit} />
 
       <EditHabitModal
         modalVisible={editModalVisible}

@@ -21,23 +21,18 @@ const SettingsScreen = observer(() => {
         value={notificationStore.enabled}
         onToggle={notificationStore.toggle}
       />
-      <SwitchItem
+      {/* <SwitchItem
         label="Recordatorios sutiles"
         value={remindersEnabled}
         onToggle={setRemindersEnabled}
-      />
+      /> */}
 
       <ButtonItem label="Horario de notificaciones" onPress={() => (setModalVisible(!modalVisible))} />
 
       {/* SEGURIDAD Y PRIVACIDAD */}
       <Text style={styles.sectionTitle}>SEGURIDAD Y PRIVACIDAD</Text>
-      <ButtonItem label="Exportar Datos" onPress={() => console.log('Exportar')} />
+      {/* <ButtonItem label="Exportar Datos" onPress={() => console.log('Exportar')} /> */}
       <ButtonItem label="Borrar Historial de Datos" onPress={() => console.log('Borrar')} />
-
-      {/* INFORMACIÓN APP */}
-      <Text style={styles.sectionTitle}>INFORMACIÓN APP</Text>
-      <InfoItem label="Versión app" value="1.0.0" />
-      <LinkItem label="Política y privacidad" url="https://politica.com" />
 
       {/* CONFIGURACIÓN AVANZADA */}
       <Text style={styles.sectionTitle}>CONFIGURACIÓN AVANZADA</Text>
@@ -47,6 +42,11 @@ const SettingsScreen = observer(() => {
         onToggle={setCloudSyncEnabled}
       />
       
+      {/* INFORMACIÓN APP */}
+      <Text style={styles.sectionTitle}>INFORMACIÓN APP</Text>
+      <InfoItem label="Versión app" value="1.0.0" />
+      <LinkItem label="Política y privacidad" url="https://politica.com" />
+
       <ModalNotificationTimes visible={modalVisible} setModalVisible={setModalVisible} />
 
     </ScrollView>

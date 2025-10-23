@@ -1,4 +1,4 @@
-import { Habit } from '../../domain/entities/Habit';
+import { Habit } from '../../domain/entities/Habit.ts';
 import { IHabitRepository } from '../../domain/repositories/IHabitRepository.ts';
 
 export class GetHabits {

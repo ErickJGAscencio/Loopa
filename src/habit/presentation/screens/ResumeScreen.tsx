@@ -116,6 +116,7 @@ const ResumeScreen = observer(() => {
               )
             ))}
           </View>
+          <Text style={{marginTop:40, justifyContent:'center', textAlign:'center'}}>Más proximamente...</Text>
           {/* <Text style={styles.title}>MOVITACIÓN</Text>
           <Text>Frases motivadoras según el progreso</Text> */}
 

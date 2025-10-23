@@ -54,7 +54,7 @@ function App() {
   async function checkExactAlarmStatus() {
     try {
       const isAllowed = await AlarmPermission.canScheduleExactAlarms();
-      console.log("¿Permiso de alarmas activo? ", isAllowed);
+      // console.log("¿Permiso de alarmas activo? ", isAllowed);
       return isAllowed;
     } catch (error) {
       console.error("Error al verificar permiso de alarmas:", error);
@@ -65,7 +65,7 @@ function App() {
   useEffect(() => { // Revisa si la aplicacion ha cambiado de estado segundo-plano -> primer-plano
     const subscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
-        console.log('La app volvió al primer plano');
+        // console.log('La app volvió al primer plano');
 
 
       }
@@ -99,7 +99,7 @@ function App() {
   useEffect(() => { // Revisamos si la aplicacion ha cambiado de estado segundo-plano -> primer-plano | Revisamos fechas
     const subscription = AppState.addEventListener('change', (nextState) => {
       if (nextState === 'active') {
-        console.log("La app volvió al primer plano");
+        // console.log("La app volvió al primer plano");
 
         const handleResume = async () => {
           const date = await getStoreDate();
@@ -111,12 +111,12 @@ function App() {
           const formattedDate = `${year}-${month}-${day}`;
 
           if (date == null) {
-            console.log("No hay fecha guardada. Guardamos:", formattedDate);
+            // console.log("No hay fecha guardada. Guardamos:", formattedDate);
             storeDate(formattedDate);
           } else {
-            console.log("Ya hay fecha:", date);
+            // console.log("Ya hay fecha:", date);
             if (date !== formattedDate) {
-              console.log("La fecha cambió. Reiniciamos hábitos.");
+              // console.log("La fecha cambió. Reiniciamos hábitos.");
               storeDate(formattedDate);
               await resetHabits();
               habitStore.loadHabits();
@@ -150,13 +150,13 @@ function App() {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
       );
-      console.log('Permiso de notificaciones:', granted);
+      // console.log('Permiso de notificaciones:', granted);
     }
 
     // configura PushNotification
     PushNotification.configure({
       onNotification: (notification: any) => {
-        console.log('Notificación recibida:', notification);
+        // console.log('Notificación recibida:', notification);
       },
       requestPermissions: Platform.OS === 'ios',
     });
@@ -168,8 +168,9 @@ function App() {
       importance: 4,
       vibrate: true,
       soundName: 'notification_1.mp3'
-    }, (created: any) => console.log(`Canal creado: ${created}`));
+    }, (created: any) => ()=>(""));
   }
+  
   useEffect(() => {
     async function initNotifications() {
       if (Platform.OS === 'android' && Platform.Version >= 31) {
@@ -286,7 +287,7 @@ function App() {
               headerShadowVisible: false,
               headerTitleAlign: 'center',
               headerLeft: () => <View />,
-              headerRight: () => <View />, // placeholder
+              // headerRight: () => <View />, // placeholder
             }}
           />
           <Stack.Screen

@@ -1,6 +1,6 @@
 import { habitStore } from '../stores/HabitStore';
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState } from "react";
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { HabitCard } from "../components/HabitCard";
 import { observer } from "mobx-react-lite";
 import { MonthlyCalendar } from '../components/MonthlyCalendar';
@@ -18,6 +18,22 @@ const HomeScreen = observer(() => {
   const navigation = useNavigation();
   const [sectionActive, setSectionActive] = useState<boolean>(true);
   const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+useEffect(() => {
+  Animated.timing(rotateAnim, {
+    toValue: showMenu ? 1 : 0,
+    duration: 200,
+    useNativeDriver: true, // ← mejor rendimiento para transformaciones
+  }).start();
+}, [showMenu]);
+
+
+const rotateInterpolate = rotateAnim.interpolate({
+  inputRange: [0, 1],
+  outputRange: ['0deg', '-90deg'], // o '180deg' si quieres giro completo
+});
 
 
   useEffect(() => {
@@ -37,32 +53,34 @@ const HomeScreen = observer(() => {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity
-          style={{
-            width: 35,
-            height: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => setShowMenu(!showMenu)}
-        >
-          <FontAwesome6 name="bars" size={20} color="#1e1e1e" iconStyle='solid' />
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
+          <TouchableOpacity
+            style={{
+              width: 35,
+              height: 35,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => setShowMenu(!showMenu)}
+          >
+            <FontAwesome6 name="bars" size={20} color="#1e1e1e" iconStyle='solid' />
+          </TouchableOpacity>
+        </Animated.View>
       ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{
-            width: 35,
-            height: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        // onPress={() => setModalVisible(true)}
-        >
-          <FontAwesome6 name="bell" size={23} color="#1e1e1e" iconStyle='solid' />
-        </TouchableOpacity>
+      // headerRight: () => (
+      //   <TouchableOpacity
+      //     style={{
+      //       width: 35,
+      //       height: 35,
+      //       justifyContent: 'center',
+      //       alignItems: 'center',
+      //     }}
+      //   // onPress={() => setModalVisible(true)}
+      //   >
+      //     <FontAwesome6 name="bell" size={23} color="#1e1e1e" iconStyle='solid' />
+      //   </TouchableOpacity>
 
-      ),
+      // ),
     });
   }, [navigation, showMenu]);
 
@@ -104,21 +122,27 @@ const HomeScreen = observer(() => {
         {sectionActive ? (
           <>
             <View style={{ backgroundColor: '#e4e4e4ff', borderRadius: 15, padding: 20, width: '100%', marginTop: 20 }}>
-              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                 <Text style={{ color: '#1e1e1e', fontSize: 20, fontWeight: 600 }}>
                   {today.toLocaleString("es-MX", { month: "long", day: "numeric" })}
                 </Text>
+                
                 <TouchableOpacity
                   style={{
-                    width: 35,
+                    width: '30%',
                     height: 35,
                     justifyContent: 'center',
                     backgroundColor: '#1e1e1e',
                     alignItems: 'center',
                     borderRadius: 50,
+                    display:'flex',
+                    flexDirection:'row',
+                    gap:10
                   }}
-                  onPress={() => { setModalVisible(true);}}
+                  onPress={() => { setModalVisible(true); }}
                 >
+                  <Text style={{color:'#fff', fontSize:15, fontWeight:500}}>Añadir</Text>
+
                   <FontAwesome6 name="plus" size={15} color="#fff" iconStyle='solid' />
                 </TouchableOpacity>
               </View>
@@ -130,7 +154,7 @@ const HomeScreen = observer(() => {
                   ))}
                 </ScrollView>
                 ) : (
-                  <View style={{marginTop:20}} >
+                  <View style={{ marginTop: 20 }} >
                     <Text style={{ fontSize: 20, color: '#979797ff' }}>Aún no hay hábitos</Text>
                   </View>
                 )

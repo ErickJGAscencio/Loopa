@@ -1,4 +1,4 @@
-import { CreateHabitLog } from "../../application/usecases/CreateHabitLog";
+import { CreateHabitLog } from "../../application/usecases/create/CreateHabitLog";
 import { GetHabitsLogs } from "../../application/usecases/GetHabitLogs";
 import { HabitLog } from "../../domain/entities/HabitLog";
 import { HabitLogRepositoryImpl } from "../../infrastructure/repositories/HabitLogRepositoryImpl";
